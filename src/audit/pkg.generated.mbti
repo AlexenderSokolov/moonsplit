@@ -1,5 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "AlexenderSokolov/moonsplit/src/audit"
+
 import {
   "AlexenderSokolov/moonsplit/src/record",
   "AlexenderSokolov/moonsplit/src/spec",

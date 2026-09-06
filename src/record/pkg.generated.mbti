@@ -1,5 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "AlexenderSokolov/moonsplit/src/record"
+
 import {
   "moonbitlang/core/debug",
 }
