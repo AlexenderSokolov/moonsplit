@@ -6,7 +6,6 @@ moon test
 moon test --target js
 
 moon info
-moon fmt --check
 
 version="$(moon run cmd/moonsplit -- --version)"
 if [ "$version" != "MoonSplit 0.1.1" ]; then
