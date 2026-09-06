@@ -62,6 +62,8 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - `ratio_tolerance_bp` 在 v0.1.0 中只作为配置元数据保留并导出，不参与计划或审计的硬校验。
 - `seed`、`k`、分区权重和 `ratio_tolerance_bp` 都必须是非负整数；关联桶使用 `(key_name, key_value)` 元组，避免字符串分隔符歧义。
 - CLI 提供 `--version` / `version`，版本号与 `moon.mod` 保持一致。
+- 检查、构建和测试（含 JS 目标）统一使用 `--deny-warn`，任何新增警告都会导致检查失败；`*_test.mbt` 是黑盒测试，`moonbitlang/core/test` 需通过 `import { ... } for "test"` 导入。
+- 发布顺序固定为：更新版本号并提交，打 tag 并推送到 GitHub，确认 CI 通过后再执行 `moon publish`，保证 Mooncakes manifest 的发布时间晚于对应提交。
 
 ## 验收标准
 
