@@ -28,4 +28,4 @@ jobs:
       - name: Test JS target
         run: moon test --target js
       - name: End-to-end checks
-        run: ./run_check.sh
+        run: bash ./run_check.sh
