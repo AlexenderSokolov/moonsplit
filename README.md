@@ -10,6 +10,21 @@ MoonSplit is a MoonBit CLI and library for grouped dataset splitting and leakage
 - Stable JSON, JSONL, and Markdown exports.
 - wasm-gc and JS targets.
 
+## Installation
+
+```bash
+moon add AlexenderSokolov/moonsplit
+```
+
+To run from source:
+
+```bash
+git clone https://github.com/AlexenderSokolov/moonsplit.git
+cd moonsplit
+```
+
+The `examples/` directory contains ready-made JSON, JSONL, and split specs.
+
 ## Quick Start
 
 ```powershell
