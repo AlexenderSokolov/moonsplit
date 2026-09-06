@@ -1,0 +1,6 @@
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "AlexenderSokolov/moonsplit/src/plan",
+  "AlexenderSokolov/moonsplit/src/group",
+}

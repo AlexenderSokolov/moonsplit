@@ -1,0 +1,16 @@
+warnings = "+a-unused_optional_argument-unused_default_value-missing_invariant-missing_reasoning-missing_doc-unused_mut-test_unqualified_package-unused_try"
+
+import {
+  "moonbitlang/x/fs",
+  "moonbitlang/x/sys",
+  "moonbitlang/core/string",
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "AlexenderSokolov/moonsplit/src/plan",
+  "AlexenderSokolov/moonsplit/src/audit",
+  "AlexenderSokolov/moonsplit/src/export",
+}
+
+options(
+  "is-main": true,
+)

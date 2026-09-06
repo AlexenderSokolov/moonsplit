@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "kind": "holdout",
+  "isolation_keys": ["speaker_id"],
+  "seed": 42,
+  "balance_labels": false,
+  "ratio_tolerance_bp": 500,
+  "partitions": [
+    {"name": "train", "weight": 6},
+    {"name": "validation", "weight": 2},
+    {"name": "test", "weight": 2}
+  ]
+}

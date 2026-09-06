@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/group"
+
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn build_components(Array[@record.Record], Array[String]) -> Result[Components, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub struct Component {
+  // private fields
+} derive(@debug.Debug)
+pub fn Component::add_member(Self, String) -> Unit
+pub fn Component::id(Self) -> String
+pub fn Component::member_ids(Self) -> Array[String]
+pub fn Component::new(String, Array[String], Array[RelationEdge]) -> Self
+pub fn Component::witness_edges(Self) -> Array[RelationEdge]
+
+pub struct Components {
+  // private fields
+} derive(@debug.Debug)
+pub fn Components::count(Self) -> Int
+pub fn Components::groups(Self) -> Array[Component]
+pub fn Components::new(Array[Component]) -> Self
+
+pub struct RelationEdge {
+  // private fields
+} derive(@debug.Debug)
+pub fn RelationEdge::key_name(Self) -> String
+pub fn RelationEdge::key_value(Self) -> String
+pub fn RelationEdge::left_id(Self) -> String
+pub fn RelationEdge::new(String, String, String, String) -> Self
+pub fn RelationEdge::right_id(Self) -> String
+
+// Type aliases
+
+// Traits
+

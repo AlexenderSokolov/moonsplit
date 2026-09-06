@@ -1,0 +1,4 @@
+{"id":"utt_0001","label":"positive","keys":{"speaker_id":"spk_01","utterance_id":"u01"}}
+{"id":"utt_0002","label":"negative","keys":{"speaker_id":"spk_02","utterance_id":"u02"}}
+{"id":"utt_0003","label":"positive","keys":{"speaker_id":"spk_03","utterance_id":"u03"}}
+{"id":"utt_0004","label":"negative","keys":{"speaker_id":"spk_04","utterance_id":"u04"}}

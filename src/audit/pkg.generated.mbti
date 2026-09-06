@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/audit"
+
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn audit_split(Array[@record.Record], @spec.SplitSpec, Array[@record.Assignment]) -> Result[AuditReport, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub struct AuditReport {
+  // private fields
+} derive(@debug.Debug)
+pub fn AuditReport::is_valid(Self) -> Bool
+pub fn AuditReport::issues(Self) -> Array[@record.Issue]
+pub fn AuditReport::new(Bool, Array[@record.Issue], Map[String, Int]) -> Self
+pub fn AuditReport::partition_counts(Self) -> Map[String, Int]
+
+// Type aliases
+
+// Traits
+

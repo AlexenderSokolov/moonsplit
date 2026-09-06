@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/spec"
+
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn parse_spec(String) -> Result[SplitSpec, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub struct Partition {
+  // private fields
+} derive(@debug.Debug)
+pub fn Partition::name(Self) -> String
+pub fn Partition::new(String, Int) -> Self
+pub fn Partition::weight(Self) -> Int
+
+pub(all) enum SplitKind {
+  Holdout
+  KFold
+} derive(Eq, @debug.Debug)
+
+pub struct SplitSpec {
+  // private fields
+} derive(@debug.Debug)
+pub fn SplitSpec::balance_labels(Self) -> Bool
+pub fn SplitSpec::isolation_keys(Self) -> Array[String]
+pub fn SplitSpec::k(Self) -> Int
+pub fn SplitSpec::kind(Self) -> SplitKind
+pub fn SplitSpec::new(SplitKind, Array[String], UInt, Bool, Int, Array[Partition], Int) -> Self
+pub fn SplitSpec::partition_names(Self) -> Array[String]
+pub fn SplitSpec::partitions(Self) -> Array[Partition]
+pub fn SplitSpec::ratio_tolerance_bp(Self) -> Int
+pub fn SplitSpec::seed(Self) -> UInt
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,57 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/record"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn parse_assignments(String) -> Result[Array[Assignment], Array[Issue]]
+
+pub fn parse_records(String, InputFormat) -> Result[Array[Record], Array[Issue]]
+
+// Errors
+
+// Types and methods
+pub struct Assignment {
+  // private fields
+} derive(@debug.Debug)
+pub fn Assignment::id(Self) -> String
+pub fn Assignment::new(String, String) -> Self
+pub fn Assignment::partition(Self) -> String
+
+pub(all) enum InputFormat {
+  Json
+  Jsonl
+} derive(Eq, @debug.Debug)
+
+pub struct Issue {
+  // private fields
+} derive(@debug.Debug)
+pub fn Issue::code(Self) -> String
+pub fn Issue::error(String, String) -> Self
+pub fn Issue::error_at_line(String, String, Int) -> Self
+pub fn Issue::line(Self) -> Int?
+pub fn Issue::message(Self) -> String
+pub fn Issue::severity(Self) -> IssueSeverity
+pub fn Issue::warning(String, String) -> Self
+
+pub(all) enum IssueSeverity {
+  Error
+  Warning
+} derive(Eq, @debug.Debug)
+
+pub struct Record {
+  // private fields
+} derive(@debug.Debug)
+pub fn Record::id(Self) -> String
+pub fn Record::key(Self, String) -> String?
+pub fn Record::keys(Self) -> Map[String, String]
+pub fn Record::label(Self) -> String?
+pub fn Record::new(String, String?, Map[String, String]) -> Self
+pub fn Record::snapshot(Self) -> Self
+
+// Type aliases
+
+// Traits
+

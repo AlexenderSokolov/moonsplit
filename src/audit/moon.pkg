@@ -1,0 +1,5 @@
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "AlexenderSokolov/moonsplit/src/group",
+}

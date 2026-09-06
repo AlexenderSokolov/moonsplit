@@ -1,0 +1,5 @@
+[
+  {"id":"q_001","label":"math","keys":{"source_doc":"doc_a","question_family":"arithmetic"}},
+  {"id":"q_002","label":"math","keys":{"source_doc":"doc_a","question_family":"arithmetic"}},
+  {"id":"q_003","label":"logic","keys":{"source_doc":"doc_b","question_family":"puzzle"}}
+]

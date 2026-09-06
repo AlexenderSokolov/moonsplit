@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/plan"
+
+import {
+  "AlexenderSokolov/moonsplit/src/group",
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn fold_members(SplitPlan, String, FoldSide) -> Result[Array[String], Array[@record.Issue]]
+
+pub fn plan_split(Array[@record.Record], @spec.SplitSpec) -> Result[SplitPlan, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub(all) enum FoldSide {
+  Validation
+  Train
+} derive(Eq, @debug.Debug)
+
+pub struct SplitPlan {
+  // private fields
+} derive(@debug.Debug)
+pub fn SplitPlan::assignments(Self) -> Array[@record.Assignment]
+pub fn SplitPlan::balance_labels(Self) -> Bool
+pub fn SplitPlan::components(Self) -> @group.Components
+pub fn SplitPlan::isolation_keys(Self) -> Array[String]
+pub fn SplitPlan::k(Self) -> Int
+pub fn SplitPlan::kind(Self) -> @spec.SplitKind
+pub fn SplitPlan::new(@spec.SplitKind, Array[String], Array[@record.Assignment], @group.Components, UInt, Bool, Int, Array[@spec.Partition], Int, Array[String]) -> Self
+pub fn SplitPlan::partition_weights(Self) -> Array[@spec.Partition]
+pub fn SplitPlan::ratio_tolerance_bp(Self) -> Int
+pub fn SplitPlan::seed(Self) -> UInt
+pub fn SplitPlan::warnings(Self) -> Array[String]
+
+// Type aliases
+
+// Traits
+
