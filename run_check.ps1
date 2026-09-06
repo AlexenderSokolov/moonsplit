@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
 Set-Location -LiteralPath $PSScriptRoot
-moon check
-moon test
-moon test --target js
+moon check --deny-warn
+moon test --deny-warn
+moon test --target js --deny-warn
 
 moon info
 moon fmt --check

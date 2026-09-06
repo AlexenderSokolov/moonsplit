@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
-moon check
-moon test
-moon test --target js
+moon check --deny-warn
+moon test --deny-warn
+moon test --target js --deny-warn
 
 moon info
 
