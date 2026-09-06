@@ -1,6 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "AlexenderSokolov/moonsplit/src/group"
-
 import {
   "AlexenderSokolov/moonsplit/src/record",
   "moonbitlang/core/debug",
@@ -40,4 +39,3 @@ pub fn RelationEdge::right_id(Self) -> String
 // Type aliases
 
 // Traits
-

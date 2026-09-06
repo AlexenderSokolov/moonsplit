@@ -1,6 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "AlexenderSokolov/moonsplit/src/export"
-
 import {
   "AlexenderSokolov/moonsplit/src/plan",
 }
@@ -21,4 +20,3 @@ pub fn report_markdown(@plan.SplitPlan) -> String
 // Type aliases
 
 // Traits
-

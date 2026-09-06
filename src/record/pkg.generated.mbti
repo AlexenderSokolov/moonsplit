@@ -1,6 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "AlexenderSokolov/moonsplit/src/record"
-
 import {
   "moonbitlang/core/debug",
 }
@@ -54,4 +53,3 @@ pub fn Record::snapshot(Self) -> Self
 // Type aliases
 
 // Traits
-
