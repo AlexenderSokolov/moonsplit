@@ -26,7 +26,7 @@ test "multi-key components use the minimum id and ordered members" {
   assert_eq(components.count(), 1)
   let component = components.groups()[0]
   assert_eq(component.id(), "a")
-  assert_eq(component.member_ids(), ["a", "b", "c"])
+  @test.assert_eq(component.member_ids(), ["a", "b", "c"])
   assert_eq(component.witness_edges().length(), 2)
 }
 
@@ -68,7 +68,7 @@ test "multi-key grouping preserves edges when the union root changes" {
   assert_eq(components.count(), 1)
   let component = components.groups()[0]
   assert_eq(component.id(), "r0")
-  assert_eq(component.member_ids(), ["r0", "r1", "r2", "r3"])
+  @test.assert_eq(component.member_ids(), ["r0", "r1", "r2", "r3"])
   assert_eq(component.witness_edges().length(), 3)
   let mut r1_edge_count = 0
   for edge in component.witness_edges() {
@@ -116,7 +116,7 @@ test "witness edges are canonical for reversed input" {
   let left = forward_components.groups()[0]
   let right = reversed_components.groups()[0]
   assert_eq(left.id(), right.id())
-  assert_eq(left.member_ids(), right.member_ids())
+  @test.assert_eq(left.member_ids(), right.member_ids())
   assert_eq(left.witness_edges().length(), right.witness_edges().length())
   let left_edges = left.witness_edges()
   let right_edges = right.witness_edges()

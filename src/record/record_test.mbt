@@ -6,7 +6,7 @@ test "parse JSONL reports line numbers" {
     Err(issues) => {
       assert_eq(issues.length(), 1)
       assert_eq(issues[0].code(), "missing_keys")
-      assert_eq(issues[0].line(), Some(2))
+      @test.assert_eq(issues[0].line(), Some(2))
     }
   }
 }

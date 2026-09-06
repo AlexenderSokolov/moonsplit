@@ -87,9 +87,9 @@ test "twenty equal components split 16/2/2" {
       None => counts[assignment.partition()] = 1
     }
   }
-  assert_eq(counts.get("train"), Some(16))
-  assert_eq(counts.get("validation"), Some(2))
-  assert_eq(counts.get("test"), Some(2))
+  @test.assert_eq(counts.get("train"), Some(16))
+  @test.assert_eq(counts.get("validation"), Some(2))
+  @test.assert_eq(counts.get("test"), Some(2))
 }
 
 ///|
@@ -126,7 +126,7 @@ test "a large component is kept and warned" {
       None => counts[assignment.partition()] = 1
     }
   }
-  assert_eq(counts.get("train"), Some(9))
+  @test.assert_eq(counts.get("train"), Some(9))
 }
 
 ///|
@@ -179,7 +179,7 @@ test "kfold validates each sample exactly once" {
     assert_eq(train.length(), 8)
   }
   for record in records {
-    assert_eq(validation_seen.get(record.id()), Some(1))
+    @test.assert_eq(validation_seen.get(record.id()), Some(1))
   }
 }
 
@@ -237,8 +237,8 @@ test "label balancing uses integer component targets" {
       }
     }
   }
-  assert_eq(train_labels.get("positive"), Some(8))
-  assert_eq(train_labels.get("negative"), Some(8))
+  @test.assert_eq(train_labels.get("positive"), Some(8))
+  @test.assert_eq(train_labels.get("negative"), Some(8))
 }
 
 ///|

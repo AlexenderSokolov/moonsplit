@@ -4,3 +4,7 @@ import {
   "AlexenderSokolov/moonsplit/src/group",
   "AlexenderSokolov/moonsplit/src/audit",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"

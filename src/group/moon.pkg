@@ -1,3 +1,7 @@
 import {
   "AlexenderSokolov/moonsplit/src/record",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"
