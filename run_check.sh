@@ -8,6 +8,18 @@ moon test --target js
 moon info
 moon fmt --check
 
+version="$(moon run cmd/moonsplit -- --version)"
+if [ "$version" != "MoonSplit 0.1.1" ]; then
+  echo "--version printed '$version', expected 'MoonSplit 0.1.1'" >&2
+  exit 1
+fi
+
+version="$(moon run cmd/moonsplit -- version)"
+if [ "$version" != "MoonSplit 0.1.1" ]; then
+  echo "version printed '$version', expected 'MoonSplit 0.1.1'" >&2
+  exit 1
+fi
+
 stamp="$(date +%Y%m%d_%H%M%S)"
 root="artifacts/check_${stamp}"
 mkdir -p "$root"

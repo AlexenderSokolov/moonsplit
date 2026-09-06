@@ -52,3 +52,15 @@ pub fn audit_split(
 ```
 
 The auditor recomputes grouping from raw records. It detects unknown records, duplicate assignments, missing assignments, invalid partitions, empty partitions, and cross-partition isolation conflicts.
+
+## K-fold members
+
+```moonbit
+pub fn fold_members(
+  plan : SplitPlan,
+  fold_name : String,
+  side : FoldSide,
+) -> Result[Array[String], Array[Issue]]
+```
+
+`FoldSide` is either `Validation` or `Train`. This function accepts only K-fold plans. For a valid fold name, `Validation` returns the record IDs assigned to that fold; `Train` returns the complement. Returned IDs are sorted lexicographically.

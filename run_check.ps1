@@ -7,6 +7,16 @@ moon test --target js
 moon info
 moon fmt --check
 
+$version = & moon run cmd/moonsplit -- --version
+if ($version -ne "MoonSplit 0.1.1") {
+  throw "--version printed '$version', expected 'MoonSplit 0.1.1'"
+}
+
+$version = & moon run cmd/moonsplit -- version
+if ($version -ne "MoonSplit 0.1.1") {
+  throw "version printed '$version', expected 'MoonSplit 0.1.1'"
+}
+
 $stamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $root = Join-Path $PSScriptRoot "artifacts\check_$stamp"
 New-Item -ItemType Directory -Path $root -Force | Out-Null

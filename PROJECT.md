@@ -61,6 +61,7 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - 当前依赖 `moonbitlang/x@0.4.46`。计划中的 `x@0.5.1` 因本机 registry 连接失败暂未采用；升级后必须重跑 wasm-gc 与 JS 双目标检查。
 - `ratio_tolerance_bp` 在 v0.1.0 中只作为配置元数据保留并导出，不参与计划或审计的硬校验。
 - `seed`、`k`、分区权重和 `ratio_tolerance_bp` 都必须是非负整数；关联桶使用 `(key_name, key_value)` 元组，避免字符串分隔符歧义。
+- CLI 提供 `--version` / `version`，版本号与 `moon.mod` 保持一致。
 
 ## 验收标准
 
@@ -73,3 +74,4 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - `k`、分区权重和 `ratio_tolerance_bp` 拒绝小数；无盘符 rooted 输出路径也必须验证父目录存在。
 - wasm-gc 与 JS 目标的分配清单一致。
 - CLI 退出码固定为 0/2/3/4。
+- `--version` 和 `version` 输出 `MoonSplit 0.1.1`。

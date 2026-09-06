@@ -1,5 +1,14 @@
 # 验收记录
 
+## 0.1.1 - 2026-09-06
+
+- `moon check` 通过，0 个错误。
+- `moon fmt --check` 通过。
+- `moon test` 和 `moon test --target js` 均 24/24 通过。
+- `./run_check.ps1` 通过，并额外验证 `--version` 和 `version` 都输出 `MoonSplit 0.1.1`。
+- `./run_bench.ps1` 成功处理 100000 条记录、20000 个组件、100000 条分配。
+- 新增 `CHANGELOG.md` 和 `docs/output.md`；`docs/api.md` 补充 K 折 `fold_members`。
+
 ## 2026-09-06
 
 - `moon check` 通过，0 个错误。

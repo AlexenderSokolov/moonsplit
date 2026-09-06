@@ -29,6 +29,7 @@ MoonSplit is a MoonBit CLI and library for grouped dataset splitting and leakage
 moon run cmd/moonsplit -- plan --data examples/voice_records.jsonl --spec examples/holdout_spec.json --out examples/demo_run
 moon run cmd/moonsplit -- audit --data examples/voice_records.jsonl --spec examples/holdout_spec.json --assignments examples/demo_run/assignments.jsonl
 moon run cmd/moonsplit -- demo --out examples/demo_run
+moon run cmd/moonsplit -- --version
 moon run cmd/moonsplit -- smoke --data examples/voice_records.jsonl
 ```
 
@@ -40,6 +41,8 @@ The output directory must not already exist. The parent directory must exist. Ex
 - `4`: output write error
 
 `smoke` reads one input file and prints its character count for quick file-system checks.
+
+The output files are documented in [docs/output.md](docs/output.md).
 
 ## Scope
 

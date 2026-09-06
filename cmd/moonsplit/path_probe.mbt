@@ -16,3 +16,8 @@ test "parent path preserves rooted subpaths" {
   assert_eq(parent_path("/missing_parent/plan"), "/missing_parent")
   assert_eq(parent_path("/newdir"), "/")
 }
+
+///|
+test "version text matches the package version" {
+  assert_eq(version_text(), "MoonSplit 0.1.1")
+}

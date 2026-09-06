@@ -1,7 +1,7 @@
 ///|
 fn usage() -> String {
   let text =
-    #|MoonSplit 0.1.0
+    #|MoonSplit 0.1.1
     #|
     #|Usage:
     #|  moon run cmd/moonsplit -- plan --data <records> --spec <spec> --out <dir> [--format json|jsonl]
@@ -9,6 +9,7 @@ fn usage() -> String {
     #|  moon run cmd/moonsplit -- demo --out <dir>
     #|  moon run cmd/moonsplit -- bench --records 100000 --speakers 20000
     #|  moon run cmd/moonsplit -- smoke --data <file>
+    #|  moon run cmd/moonsplit -- --version | version
     #|
     #|Exit codes:
     #|  0 success
@@ -17,6 +18,11 @@ fn usage() -> String {
     #|  4 output write error
     #|
   text
+}
+
+///|
+fn version_text() -> String {
+  "MoonSplit 0.1.1"
 }
 
 ///|
@@ -29,6 +35,14 @@ fn main {
   match args[1] {
     "--help" | "-h" => {
       println(usage())
+      @sys.exit(0)
+    }
+    "--version" => {
+      println(version_text())
+      @sys.exit(0)
+    }
+    "version" => {
+      println(version_text())
       @sys.exit(0)
     }
     "plan" => run_plan_command(args)
