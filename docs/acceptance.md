@@ -13,11 +13,11 @@
 
 - GitHub 仓库：`https://github.com/AlexenderSokolov/moonsplit`
 - 发布标签：`v0.1.1`
-- GitHub 提交：`3cc5366`
+- GitHub 提交：`afceb9f`
 - GitHub Actions：
-  - `main` run `34013539348`：成功。
-  - `v0.1.1` run `34013541575` 成功。
-  - 覆盖 `moon info`、`moon check`、`moon build`、`moon test`、`moon test --target js` 和 `./run_check.sh`。
+  - `main` run `34013988648`：成功。
+  - `v0.1.1` run `34013990933` 成功。
+  - 覆盖 `moon info`、`moon check`、`moon build`、`moon test`、`moon test --target js` 和 `bash ./run_check.sh`。
 - Mooncakes：
   - 包名：`AlexenderSokolov/moonsplit`
   - `latest_version = 0.1.1`
