@@ -13,6 +13,8 @@ jobs:
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Sync registry
+        run: moon update
       - name: Public interface
         run: |
           moon info
