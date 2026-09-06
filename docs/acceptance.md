@@ -9,6 +9,27 @@
 - `./run_bench.ps1` 成功处理 100000 条记录、20000 个组件、100000 条分配。
 - 新增 `CHANGELOG.md` 和 `docs/output.md`；`docs/api.md` 补充 K 折 `fold_members`。
 
+## 0.1.1 公开发布闭环 - 2026-09-06
+
+- GitHub 仓库：`https://github.com/AlexenderSokolov/moonsplit`
+- 发布标签：`v0.1.1`
+- GitHub 提交：`3cc5366`
+- GitHub Actions：
+  - `main` run `34013539348`：成功。
+  - `v0.1.1` run `34013541575` 成功。
+  - 覆盖 `moon info`、`moon check`、`moon build`、`moon test`、`moon test --target js` 和 `./run_check.sh`。
+- Mooncakes：
+  - 包名：`AlexenderSokolov/moonsplit`
+  - `latest_version = 0.1.1`
+  - `build_status = success`
+  - `has_package = true`
+  - Manifest 地址：`https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit`
+- 干净安装复现：
+  - 临时项目通过 `moon.mod` 引入 `AlexenderSokolov/moonsplit@0.1.1`。
+  - `moon build` 成功下载并构建该包。
+  - `moon test` 成功运行（0 个测试，因为临时项目没有自己的测试入口）。
+- 按用户本轮指示，GitLink 发布不做。
+
 ## 2026-09-06
 
 - `moon check` 通过，0 个错误。
