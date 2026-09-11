@@ -12,7 +12,7 @@ keywords = [ "dataset", "split", "leakage", "ml", "research" ]
 
 description = "A MoonBit dataset grouping, splitting, and leakage audit library for reproducible machine learning workflows."
 
-warnings = "+a-unused_optional_argument-unused_default_value-missing_invariant-missing_reasoning-missing_doc-unused_mut-test_unqualified_package-unused_try"
+warnings = "+a-unused_optional_argument-unused_default_value-missing_invariant-missing_reasoning-missing_doc-unused_mut-test_unqualified_package-unused_try-implicit_impl_as_method"
 
 import {
   "moonbitlang/x@0.4.46",
