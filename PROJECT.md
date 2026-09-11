@@ -29,7 +29,7 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 3. 用并查集合并组件，组件 ID 取成员 ID 最小值。
 4. 用 `group-greedy-v1` 分配组件；见证边先规范化端点顺序，再按 `(key_name, key_value, left_id, right_id)` 排序。
 5. 独立审计跨区隔离、重复分配、遗漏、空分区和非法分区。
-6. 输出 `plan.json`、`assignments.jsonl`、`components.jsonl`、`report.md`。
+6. 输出 `plan.json`、`assignments.jsonl`、`components.jsonl`、`report.md`、`summary.json`；K-fold 额外输出 `folds.jsonl`。
 
 ## 代码结构
 
@@ -61,7 +61,7 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - 当前依赖 `moonbitlang/x@0.4.46`。计划中的 `x@0.5.1` 因本机 registry 连接失败暂未采用；升级后必须重跑 wasm-gc 与 JS 双目标检查。
 - `ratio_tolerance_bp` 使用无舍入交叉乘法进行比例偏差判断；超过阈值时只追加确定性 warning，不使计划失败，等于阈值不告警。
 - `seed`、`k`、分区权重和 `ratio_tolerance_bp` 都必须是非负整数；关联桶使用 `(key_name, key_value)` 元组，避免字符串分隔符歧义。
-- CLI 提供 `--version` / `version`，版本号与 `moon.mod` 保持一致。
+- CLI 提供 `--version` / `version`，版本号与 `moon.mod` 保持一致；v0.2.0 还提供 `normalize-spec`、`validate` 和 `audit --report json`。
 - 检查、构建和测试（含 JS 目标）统一使用 `--deny-warn`，任何新增警告都会导致检查失败；`*_test.mbt` 是黑盒测试，`moonbitlang/core/test` 需通过 `import { ... } for "test"` 导入。
 - 发布顺序固定为：更新版本号并提交，打 tag 并推送到 GitHub，确认 CI 通过后再执行 `moon publish`，保证 Mooncakes manifest 的发布时间晚于对应提交。
 
@@ -76,4 +76,4 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - `k`、分区权重和 `ratio_tolerance_bp` 拒绝小数；无盘符 rooted 输出路径也必须验证父目录存在。
 - wasm-gc 与 JS 目标的分配清单一致。
 - CLI 退出码固定为 0/2/3/4。
-- `--version` 和 `version` 输出 `MoonSplit 0.1.1`。
+- `--version` 和 `version` 输出 `MoonSplit 0.2.0`。

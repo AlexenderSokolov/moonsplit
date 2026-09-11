@@ -45,6 +45,8 @@ The algorithm is `group-greedy-v1`. Components are ordered by size and a seeded 
 
 `SplitPlan::summaries()` returns declared partitions in specification order with record counts and target, actual, and absolute deviation basis points. Each summary also exposes stable `label_counts()` and `unlabeled_count()` values.
 
+`summary_json(plan)` serializes component size, largest-component, partition-ratio, and label diagnostics with a fixed schema. `ratio_tolerance_bp` produces non-fatal warnings using exact cross-multiplication when the strict threshold is exceeded.
+
 ## Auditing
 
 ```moonbit
@@ -57,6 +59,8 @@ pub fn audit_split(
 
 The auditor recomputes grouping from raw records. It detects unknown records, duplicate assignments, missing assignments, invalid partitions, empty partitions, and cross-partition isolation conflicts.
 
+`audit_report_json(report, spec, record_count, assignment_count)` emits a stable machine-readable report. The CLI selects it with `audit --report json`; `--report text` retains the human-readable form.
+
 ## K-fold members
 
 ```moonbit
@@ -68,3 +72,5 @@ pub fn fold_members(
 ```
 
 `FoldSide` is either `Validation` or `Train`. This function accepts only K-fold plans. For a valid fold name, `Validation` returns the record IDs assigned to that fold; `Train` returns the complement. Returned IDs are sorted lexicographically.
+
+`folds_jsonl(plan)` exports one `id`/`validation_fold` line per record for K-fold plans, sorted by ID and without a trailing newline. Calling it for a holdout plan returns `not_kfold_plan`.

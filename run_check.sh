@@ -9,14 +9,14 @@ moon test --target js --deny-warn
 moon info
 
 version="$(moon run cmd/moonsplit -- --version)"
-if [ "$version" != "MoonSplit 0.1.1" ]; then
-  echo "--version printed '$version', expected 'MoonSplit 0.1.1'" >&2
+if [ "$version" != "MoonSplit 0.2.0" ]; then
+  echo "--version printed '$version', expected 'MoonSplit 0.2.0'" >&2
   exit 1
 fi
 
 version="$(moon run cmd/moonsplit -- version)"
-if [ "$version" != "MoonSplit 0.1.1" ]; then
-  echo "version printed '$version', expected 'MoonSplit 0.1.1'" >&2
+if [ "$version" != "MoonSplit 0.2.0" ]; then
+  echo "version printed '$version', expected 'MoonSplit 0.2.0'" >&2
   exit 1
 fi
 

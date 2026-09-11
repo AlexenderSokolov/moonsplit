@@ -8,13 +8,13 @@ moon info
 moon fmt --check
 
 $version = & moon run cmd/moonsplit -- --version
-if ($version -ne "MoonSplit 0.1.1") {
-  throw "--version printed '$version', expected 'MoonSplit 0.1.1'"
+if ($version -ne "MoonSplit 0.2.0") {
+  throw "--version printed '$version', expected 'MoonSplit 0.2.0'"
 }
 
 $version = & moon run cmd/moonsplit -- version
-if ($version -ne "MoonSplit 0.1.1") {
-  throw "version printed '$version', expected 'MoonSplit 0.1.1'"
+if ($version -ne "MoonSplit 0.2.0") {
+  throw "version printed '$version', expected 'MoonSplit 0.2.0'"
 }
 
 $stamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"

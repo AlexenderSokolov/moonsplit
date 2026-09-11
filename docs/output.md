@@ -1,6 +1,6 @@
 # Output Contract
 
-`plan` writes four files into a new output directory. The directory must not exist; its parent directory must exist. All files use UTF-8 and LF line endings. Their bytes are deterministic for the same record set, spec, input order, and target.
+`plan` writes five files for a holdout plan and six files for a K-fold plan into a new output directory. The directory must not exist; its parent directory must exist. All files use UTF-8 and LF line endings. Their bytes are deterministic for the same record set, spec, input order, and target.
 
 ## plan.json
 
@@ -37,7 +37,25 @@ Each edge has lexicographically ordered endpoint IDs.
 
 ## report.md
 
-A deterministic Markdown report with the algorithm, seed, isolation keys, component and assignment counts, partition counts in spec order, and warnings. It is a summary, not an independent audit result.
+A deterministic Markdown report with the algorithm, seed, isolation keys, component and assignment counts, partition ratios in basis points, per-partition label counts, and warnings. It is a summary, not an independent audit result.
+
+## summary.json
+
+A stable machine-readable summary with the fixed top-level fields `schema_version`, `algorithm`, `records`, `components`, `largest_component`, and `partitions`. Each partition contains `name`, `weight`, `record_count`, `target_bp`, `actual_bp`, `deviation_bp`, `label_counts`, and `unlabeled_count`. Label keys are sorted lexicographically; empty labels and unlabeled records are distinct.
+
+## folds.jsonl
+
+K-fold plans only. Each record appears exactly once, sorted by record ID:
+
+```json
+{"id": "utt_0001", "validation_fold": "fold_0"}
+```
+
+The file has no trailing newline. Holdout plans do not create it.
+
+## Compatibility
+
+The fields of `plan.json`, `assignments.jsonl`, `components.jsonl`, and the legacy report sections remain available. v0.2.0 adds output files and extends `report.md`; consumers must ignore unknown files and must not assume a four-file directory or byte-identical Markdown.
 
 ## CLI behavior
 

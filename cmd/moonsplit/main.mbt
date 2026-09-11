@@ -1,7 +1,7 @@
 ///|
 fn usage() -> String {
   let text =
-    #|MoonSplit 0.1.1
+    #|MoonSplit 0.2.0
     #|
     #|Usage:
     #|  moon run cmd/moonsplit -- plan --data <records> --spec <spec> --out <dir> [--format json|jsonl]
@@ -24,7 +24,7 @@ fn usage() -> String {
 
 ///|
 fn version_text() -> String {
-  "MoonSplit 0.1.1"
+  "MoonSplit 0.2.0"
 }
 
 ///|
