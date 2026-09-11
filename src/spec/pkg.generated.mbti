@@ -36,6 +36,7 @@ pub fn SplitSpec::partition_names(Self) -> Array[String]
 pub fn SplitSpec::partitions(Self) -> Array[Partition]
 pub fn SplitSpec::ratio_tolerance_bp(Self) -> Int
 pub fn SplitSpec::seed(Self) -> UInt
+pub fn SplitSpec::to_json(Self) -> String
 
 // Type aliases
 

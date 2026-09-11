@@ -81,6 +81,50 @@ pub fn SplitSpec::partition_names(self : SplitSpec) -> Array[String] {
 }
 
 ///|
+/// Canonical, human-readable serialization of a split specification.
+pub fn SplitSpec::to_json(self : SplitSpec) -> String {
+  let out = StringBuilder()
+  out <+ "{\n"
+  out <+ "  \"schema_version\": 1,\n"
+  let kind_name = match self.kind {
+    Holdout => "holdout"
+    KFold => "kfold"
+  }
+  out <+ "  \"kind\": \"\{kind_name}\",\n"
+  let isolation_keys = self.isolation_keys.copy()
+  isolation_keys.sort()
+  out <+ "  \"isolation_keys\": ["
+  for index = 0; index < isolation_keys.length(); index = index + 1 {
+    if index > 0 {
+      out <+ ", "
+    }
+    out <+ "\"\{escape_json_string(isolation_keys[index])}\""
+  }
+  out <+ "],\n"
+  out <+ "  \"seed\": \{self.seed},\n"
+  out <+ "  \"balance_labels\": \{self.balance_labels},\n"
+  out <+ "  \"ratio_tolerance_bp\": \{self.ratio_tolerance_bp},\n"
+  match self.kind {
+    Holdout => {
+      out <+ "  \"partitions\": [\n"
+      for index = 0; index < self.partitions.length(); index = index + 1 {
+        let partition = self.partitions[index]
+        out <+
+          "    {\"name\": \"\{escape_json_string(partition.name())}\", \"weight\": \{partition.weight()}}"
+        if index + 1 < self.partitions.length() {
+          out <+ ","
+        }
+        out <+ "\n"
+      }
+      out <+ "  ]\n"
+    }
+    KFold => out <+ "  \"k\": \{self.k}\n"
+  }
+  out <+ "}"
+  out.to_string()
+}
+
+///|
 pub fn parse_spec(input : String) -> Result[SplitSpec, Array[@record.Issue]] {
   let normalized = input.trim(char_set="\u{feff} \t\r\n").to_owned()
   let json = @json.parse(normalized) catch {
@@ -394,4 +438,29 @@ fn string_array_field(
         @record.Issue::error("missing_array_field", "field \{field} is missing"),
       ])
   }
+}
+
+///|
+/// Escape a string for use inside a JSON string literal.
+fn escape_json_string(value : String) -> String {
+  let out = StringBuilder()
+  for ch in value {
+    match ch {
+      '"' => out <+ "\\\""
+      '\\' => out <+ "\\\\"
+      '\n' => out <+ "\\n"
+      '\r' => out <+ "\\r"
+      '\t' => out <+ "\\t"
+      _ => {
+        let code = ch.to_int()
+        if code < 32 {
+          let hex = code.to_string(radix=16).pad_start(4, '0')
+          out <+ "\\u\{hex}"
+        } else {
+          out <+ "\{ch}"
+        }
+      }
+    }
+  }
+  out.to_string()
 }

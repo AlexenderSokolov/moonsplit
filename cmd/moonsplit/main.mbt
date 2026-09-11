@@ -6,6 +6,7 @@ fn usage() -> String {
     #|Usage:
     #|  moon run cmd/moonsplit -- plan --data <records> --spec <spec> --out <dir> [--format json|jsonl]
     #|  moon run cmd/moonsplit -- audit --data <records> --spec <spec> --assignments <manifest> [--format json|jsonl]
+    #|  moon run cmd/moonsplit -- normalize-spec --spec <spec>
     #|  moon run cmd/moonsplit -- demo --out <dir>
     #|  moon run cmd/moonsplit -- bench --records 100000 --speakers 20000
     #|  moon run cmd/moonsplit -- smoke --data <file>
@@ -47,6 +48,7 @@ fn main {
     }
     "plan" => run_plan_command(args)
     "audit" => run_audit_command(args)
+    "normalize-spec" => run_normalize_spec_command(args)
     "demo" => run_demo_command(args)
     "bench" => run_bench_command(args)
     "smoke" => run_smoke_command(args)
@@ -54,6 +56,19 @@ fn main {
       println("error: unknown command: \{command}")
       println(usage())
       @sys.exit(2)
+    }
+  }
+}
+
+///|
+fn run_normalize_spec_command(args : Array[String]) -> Unit {
+  match parse_flags(args, 2, ["--spec"]) {
+    Err(message) => fail_usage(message)
+    Ok(flags) => {
+      let spec_path = require_flag(flags, "--spec")
+      let spec = load_spec(spec_path)
+      println(spec.to_json())
+      @sys.exit(0)
     }
   }
 }
