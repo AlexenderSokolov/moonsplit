@@ -7,6 +7,7 @@ fn usage() -> String {
     #|  moon run cmd/moonsplit -- plan --data <records> --spec <spec> --out <dir> [--format json|jsonl]
     #|  moon run cmd/moonsplit -- audit --data <records> --spec <spec> --assignments <manifest> [--format json|jsonl] [--report text|json]
     #|  moon run cmd/moonsplit -- normalize-spec --spec <spec>
+    #|  moon run cmd/moonsplit -- validate --data <records> --spec <spec> [--format json|jsonl]
     #|  moon run cmd/moonsplit -- demo --out <dir>
     #|  moon run cmd/moonsplit -- bench --records 100000 --speakers 20000
     #|  moon run cmd/moonsplit -- smoke --data <file>
@@ -49,6 +50,7 @@ fn main {
     "plan" => run_plan_command(args)
     "audit" => run_audit_command(args)
     "normalize-spec" => run_normalize_spec_command(args)
+    "validate" => run_validate_command(args)
     "demo" => run_demo_command(args)
     "bench" => run_bench_command(args)
     "smoke" => run_smoke_command(args)
@@ -69,6 +71,35 @@ fn run_normalize_spec_command(args : Array[String]) -> Unit {
       let spec = load_spec(spec_path)
       println(spec.to_json())
       @sys.exit(0)
+    }
+  }
+}
+
+///|
+fn run_validate_command(args : Array[String]) -> Unit {
+  match parse_flags(args, 2, ["--data", "--spec", "--format"]) {
+    Err(message) => fail_usage(message)
+    Ok(flags) => {
+      let data_path = require_flag(flags, "--data")
+      let spec_path = require_flag(flags, "--spec")
+      let format = command_format(flags, data_path)
+      let records = load_records(data_path, format)
+      let spec = load_spec(spec_path)
+      match @plan.plan_split(records, spec) {
+        Err(issues) => fail_input(issues)
+        Ok(plan) => {
+          let warnings = plan.warnings()
+          println("validate=ok")
+          println("records=\{records.length()}")
+          println("components=\{plan.components().count()}")
+          println("assignments=\{plan.assignments().length()}")
+          println("warnings=\{warnings.length()}")
+          for warning in warnings {
+            println("warning=\{warning}")
+          }
+          @sys.exit(0)
+        }
+      }
     }
   }
 }
