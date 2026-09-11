@@ -1,5 +1,30 @@
 # 验收记录
 
+## 0.2.0 实现与本地验收证据 - 2026-09-11
+
+### 实际提交范围
+
+- 实现范围：`a4fb8d4..1f891ea`，共 12 个提交；其中包含 10 个主线功能/测试增量、1 个 worktree 忽略配置提交和 1 个 v0.2.0 release preparation 提交。
+- 主线提交依次覆盖 assignment 诊断、canonical spec、组件诊断、分区摘要、标签 summary、比例 warning、audit JSON、K-fold manifest、validate preflight 和完整验收矩阵。
+- 本条验收记录随后作为独立的文档提交加入，不计作功能凑数。
+
+### 已验证
+
+- `moon fmt --check`：通过。
+- `moon info` 后 `git diff --exit-code -- '*.mbti'`：通过，无接口漂移。
+- `moon check --deny-warn`：通过。
+- `moon build --deny-warn`：通过。
+- `moon test --deny-warn`：42/42 通过。
+- `moon test --target js --deny-warn`：42/42 通过。
+- `run_check.ps1`：通过；覆盖 canonical normalize、holdout 5 文件、K-fold 6 文件、summary/folds 内容、audit JSON 成功/失败、validate 无写入、空 assignment 的 2、audit 语义失败的 3 和输出错误的 4。
+- `run_check.sh`：通过 Git for Windows login Bash 执行；同样覆盖 wasm-gc/JS 字节一致性、内容断言和 `moon fmt --check`。
+- `run_bench.ps1` 与 `run_bench.sh`：均输出 `bench=ok`、`records=100000`、`components=20000`、`assignments=100000`。
+- 最终 feature worktree `codex/moonsplit-v0.2` 清洁，`git diff --check` 通过。
+
+### 未执行的外部动作
+
+- 未执行 tag、远端 push、GitHub/GitLink 同步、CI 远端运行、Mooncakes publish 或干净安装验证；这些动作需要本轮之外的明确授权。
+
 ## 0.1.1 - 2026-09-06
 
 - `moon check` 通过，0 个错误。
