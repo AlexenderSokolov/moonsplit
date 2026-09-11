@@ -2,6 +2,7 @@
 /.mooncakes/
 /.tools/
 /.superpowers/
+.worktrees/
 /artifacts/
 /target/
 examples/demo_*/
