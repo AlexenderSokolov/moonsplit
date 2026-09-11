@@ -201,6 +201,49 @@ test "a large component is kept and warned" {
 }
 
 ///|
+test "ratio tolerance warnings are non-fatal and follow partition order" {
+  let spec = @spec.SplitSpec::new(
+    Holdout,
+    ["speaker_id"],
+    42U,
+    false,
+    0,
+    [@spec.Partition::new("train", 8), @spec.Partition::new("validation", 1)],
+    0,
+  )
+  let result = plan_split(equal_components(3), spec)
+  let plan = match result {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      SplitPlan::new(
+        Holdout,
+        [],
+        [],
+        @group.Components::new([]),
+        0U,
+        false,
+        0,
+        [],
+        0,
+        [],
+      )
+    }
+  }
+  let warnings = plan.warnings()
+  assert_eq(warnings.length(), 2)
+  assert_eq(
+    warnings[0],
+    "partition train ratio deviation 2222bp exceeds tolerance 0bp (actual 6667bp, target 8889bp)",
+  )
+  assert_eq(
+    warnings[1],
+    "partition validation ratio deviation 2222bp exceeds tolerance 0bp (actual 3333bp, target 1111bp)",
+  )
+}
+
+///|
 test "kfold validates each sample exactly once" {
   let records : Array[@record.Record] = []
   for index = 0; index < 10; index = index + 1 {

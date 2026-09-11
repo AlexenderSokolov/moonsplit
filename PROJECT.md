@@ -59,7 +59,7 @@ MoonSplit 处理机器学习实验中最常见的一类数据泄漏风险：多�
 - 分配算法固定为 `group-greedy-v1`：先保证每个分区非空，再按加权整数目标减少尺寸和可选标签的平方误差；组件不可拆分。
 - 输出目录不允许覆盖，父目录必须已存在；CLI 用文件系统错误返回固定退出码，而不是递归创建目录。
 - 当前依赖 `moonbitlang/x@0.4.46`。计划中的 `x@0.5.1` 因本机 registry 连接失败暂未采用；升级后必须重跑 wasm-gc 与 JS 双目标检查。
-- `ratio_tolerance_bp` 在 v0.1.0 中只作为配置元数据保留并导出，不参与计划或审计的硬校验。
+- `ratio_tolerance_bp` 使用无舍入交叉乘法进行比例偏差判断；超过阈值时只追加确定性 warning，不使计划失败，等于阈值不告警。
 - `seed`、`k`、分区权重和 `ratio_tolerance_bp` 都必须是非负整数；关联桶使用 `(key_name, key_value)` 元组，避免字符串分隔符歧义。
 - CLI 提供 `--version` / `version`，版本号与 `moon.mod` 保持一致。
 - 检查、构建和测试（含 JS 目标）统一使用 `--deny-warn`，任何新增警告都会导致检查失败；`*_test.mbt` 是黑盒测试，`moonbitlang/core/test` 需通过 `import { ... } for "test"` 导入。

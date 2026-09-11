@@ -307,7 +307,7 @@ pub fn plan_split(
     }
   }
   assignments.sort_by((left, right) => compare_strings(left.id(), right.id()))
-  let warnings = plan_warnings(records, spec, components)
+  let warnings = plan_warnings(records, spec, components, assignments)
   let plan = SplitPlan::new(
     spec.kind(),
     spec.isolation_keys(),
@@ -429,6 +429,7 @@ fn plan_warnings(
   records : Array[@record.Record],
   spec : @spec.SplitSpec,
   components : @group.Components,
+  assignments : Array[@record.Assignment],
 ) -> Array[String] {
   let warnings : Array[String] = []
   let mut total = 0
@@ -454,7 +455,59 @@ fn plan_warnings(
       }
     }
   }
+  let counts : Map[String, Int] = Map([])
+  for partition in spec.partitions() {
+    counts[partition.name()] = 0
+  }
+  for assignment in assignments {
+    match counts.get(assignment.partition()) {
+      Some(count) => counts[assignment.partition()] = count + 1
+      None => ()
+    }
+  }
+  if total > 0 && weight_sum > 0 {
+    for partition in spec.partitions() {
+      let count = counts[partition.name()]
+      if ratio_exceeds_tolerance(
+          count,
+          total,
+          partition.weight(),
+          weight_sum,
+          spec.ratio_tolerance_bp(),
+        ) {
+        let actual_bp = basis_points(count, total)
+        let target_bp = basis_points(partition.weight(), weight_sum)
+        let raw_deviation = actual_bp - target_bp
+        let deviation_bp = if raw_deviation < 0 {
+          -raw_deviation
+        } else {
+          raw_deviation
+        }
+        warnings.push(
+          "partition \{partition.name()} ratio deviation \{deviation_bp}bp exceeds tolerance \{spec.ratio_tolerance_bp()}bp (actual \{actual_bp}bp, target \{target_bp}bp)",
+        )
+      }
+    }
+  }
   warnings
+}
+
+///|
+/// Compare ratios without rounding, using a strict greater-than threshold.
+fn ratio_exceeds_tolerance(
+  count : Int,
+  total : Int,
+  weight : Int,
+  weight_sum : Int,
+  tolerance_bp : Int,
+) -> Bool {
+  let difference = count * weight_sum - total * weight
+  let absolute_difference = if difference < 0 {
+    -difference
+  } else {
+    difference
+  }
+  absolute_difference * 10000 > tolerance_bp * total * weight_sum
 }
 
 ///|

@@ -19,6 +19,8 @@ pub fn parse_spec(input : String) -> Result[SplitSpec, Array[Issue]]
 
 `kind` can be `holdout` or `kfold`. `isolation_keys` must contain 1 to 8 unique non-empty key names. Holdout accepts 2 to 8 partitions with positive integer weights. K-fold accepts `k` from 2 to 20.
 
+`SplitSpec::to_json()` emits the canonical specification form: fields use a fixed order, default values are explicit, isolation keys are sorted lexicographically, and holdout partitions retain declaration order. K-fold output contains `k` instead of generated partitions.
+
 ## Grouping
 
 ```moonbit
@@ -39,7 +41,9 @@ pub fn plan_split(
 ) -> Result[SplitPlan, Array[Issue]]
 ```
 
-The algorithm is `group-greedy-v1`. Components are ordered by size and a seeded deterministic hash. `seed` must be a non-negative integer. A component is never split. Optional label balancing uses an integer squared-error objective. `ratio_tolerance_bp` is retained as metadata in v0.1.0 and is not enforced as a warning or hard error.
+The algorithm is `group-greedy-v1`. Components are ordered by size and a seeded deterministic hash. `seed` must be a non-negative integer. A component is never split. Optional label balancing uses an integer squared-error objective. `ratio_tolerance_bp` is evaluated with exact cross-multiplication and emits deterministic non-fatal warnings when the strict threshold is exceeded.
+
+`SplitPlan::summaries()` returns declared partitions in specification order with record counts and target, actual, and absolute deviation basis points. Each summary also exposes stable `label_counts()` and `unlabeled_count()` values.
 
 ## Auditing
 
