@@ -395,13 +395,19 @@ fn write_plan_output(
   if !output_is_dir {
     return Err("output path is not a directory: \{out_path}")
   }
-  let files = [
+  let mut files = [
     ("plan.json", @export.plan_json(plan)),
     ("assignments.jsonl", @export.assignments_jsonl(plan)),
     ("components.jsonl", @export.components_jsonl(plan)),
     ("report.md", @export.report_markdown(plan)),
     ("summary.json", @export.summary_json(plan)),
   ]
+  if plan.kind() == KFold {
+    match @export.folds_jsonl(plan) {
+      Ok(manifest) => files.push(("folds.jsonl", manifest))
+      Err(_) => return Err("cannot export folds manifest")
+    }
+  }
   for file in files {
     let path = "\{out_path}/\{file.0}"
     @fs.write_string_to_file(path, file.1) catch {

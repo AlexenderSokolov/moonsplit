@@ -48,6 +48,32 @@ pub fn assignments_jsonl(plan : @plan.SplitPlan) -> String {
 }
 
 ///|
+/// Export one deterministic validation-fold membership line per record.
+pub fn folds_jsonl(
+  plan : @plan.SplitPlan,
+) -> Result[String, Array[@record.Issue]] {
+  if plan.kind() != KFold {
+    return Err([
+      @record.Issue::error(
+        "not_kfold_plan", "folds_jsonl only accepts kfold plans",
+      ),
+    ])
+  }
+  let assignments = plan.assignments()
+  assignments.sort_by((left, right) => left.id().lexical_compare(right.id()))
+  let out = StringBuilder()
+  for index = 0; index < assignments.length(); index = index + 1 {
+    if index > 0 {
+      out <+ "\n"
+    }
+    let assignment = assignments[index]
+    out <+
+      "{\"id\": \"\{escape_json(assignment.id())}\", \"validation_fold\": \"\{escape_json(assignment.partition())}\"}"
+  }
+  Ok(out.to_string())
+}
+
+///|
 pub fn components_jsonl(plan : @plan.SplitPlan) -> String {
   let components = plan.components().groups()
   let out = StringBuilder()

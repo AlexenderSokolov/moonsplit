@@ -104,3 +104,53 @@ test "audit JSON orders declared and unknown partitions and preserves issues" {
     "{\n  \"schema_version\": 1,\n  \"valid\": false,\n  \"records\": 3,\n  \"assignments\": 4,\n  \"partition_counts\": {\n    \"train\": 2,\n    \"test\": 1,\n    \"validation\": 1,\n    \"z\": 5\n  },\n  \"issues\": [\n    {\"severity\": \"error\", \"code\": \"cross_partition_isolation\", \"message\": \"leak\", \"line\": 7},\n    {\"severity\": \"error\", \"code\": \"missing_assignment\", \"message\": \"missing\", \"line\": null}\n  ]\n}",
   )
 }
+
+///|
+test "kfold manifest is sorted, escaped, and rejects holdout plans" {
+  let components = @group.Components::new([
+    @group.Component::new("a", ["a"], []),
+    @group.Component::new("b\"", ["b\""], []),
+  ])
+  let kfold = @plan.SplitPlan::new(
+    KFold,
+    ["speaker_id"],
+    [
+      @record.Assignment::new("b\"", "fold_1"),
+      @record.Assignment::new("a", "fold_0"),
+    ],
+    components,
+    42U,
+    false,
+    500,
+    [@spec.Partition::new("fold_0", 1), @spec.Partition::new("fold_1", 1)],
+    2,
+    [],
+  )
+  let manifest = match folds_jsonl(kfold) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      ""
+    }
+  }
+  assert_eq(
+    manifest, "{\"id\": \"a\", \"validation_fold\": \"fold_0\"}\n{\"id\": \"b\\\"\", \"validation_fold\": \"fold_1\"}",
+  )
+  let holdout = @plan.SplitPlan::new(
+    Holdout,
+    ["speaker_id"],
+    [],
+    @group.Components::new([]),
+    42U,
+    false,
+    500,
+    [@spec.Partition::new("train", 1), @spec.Partition::new("test", 1)],
+    0,
+    [],
+  )
+  match folds_jsonl(holdout) {
+    Ok(_) => assert_true(false)
+    Err(issues) => assert_eq(issues[0].code(), "not_kfold_plan")
+  }
+}
