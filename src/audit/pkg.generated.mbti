@@ -24,4 +24,3 @@ pub fn AuditReport::partition_counts(Self) -> Map[String, Int]
 // Type aliases
 
 // Traits
-

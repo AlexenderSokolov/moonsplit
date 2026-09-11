@@ -43,4 +43,3 @@ pub fn RelationEdge::right_id(Self) -> String
 // Type aliases
 
 // Traits
-

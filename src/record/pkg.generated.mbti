@@ -54,4 +54,3 @@ pub fn Record::snapshot(Self) -> Self
 // Type aliases
 
 // Traits
-
