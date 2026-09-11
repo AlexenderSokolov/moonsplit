@@ -154,3 +154,47 @@ test "kfold manifest is sorted, escaped, and rejects holdout plans" {
     Err(issues) => assert_eq(issues[0].code(), "not_kfold_plan")
   }
 }
+
+///|
+test "summary JSON sorts labels within a partition" {
+  let shared_keys : Map[String, String] = Map([])
+  shared_keys["speaker_id"] = "shared"
+  let other_keys : Map[String, String] = Map([])
+  other_keys["speaker_id"] = "other"
+  let records = [
+    @record.Record::new("z_record", Some("z"), shared_keys),
+    @record.Record::new("a_record", Some("a"), shared_keys),
+    @record.Record::new("unlabeled_record", None, other_keys),
+  ]
+  let spec = @spec.SplitSpec::new(
+    Holdout,
+    ["speaker_id"],
+    42U,
+    false,
+    10000,
+    [@spec.Partition::new("train", 1), @spec.Partition::new("test", 1)],
+    0,
+  )
+  let plan = match @plan.plan_split(records, spec) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      @plan.SplitPlan::new(
+        Holdout,
+        [],
+        [],
+        @group.Components::new([]),
+        0U,
+        false,
+        0,
+        [],
+        0,
+        [],
+      )
+    }
+  }
+  assert_true(
+    summary_json(plan).contains("\"label_counts\": {\"a\": 1, \"z\": 1}"),
+  )
+}

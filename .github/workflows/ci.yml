@@ -15,6 +15,8 @@ jobs:
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
       - name: Sync registry
         run: moon update
+      - name: Format
+        run: moon fmt --check
       - name: Public interface
         run: |
           moon info

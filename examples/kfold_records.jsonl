@@ -1,0 +1,5 @@
+{"id":"fold_record_01","label":"positive","keys":{"speaker_id":"fold_speaker_01"}}
+{"id":"fold_record_02","label":"negative","keys":{"speaker_id":"fold_speaker_02"}}
+{"id":"fold_record_03","label":"positive","keys":{"speaker_id":"fold_speaker_03"}}
+{"id":"fold_record_04","label":"negative","keys":{"speaker_id":"fold_speaker_04"}}
+{"id":"fold_record_05","label":"positive","keys":{"speaker_id":"fold_speaker_05"}}

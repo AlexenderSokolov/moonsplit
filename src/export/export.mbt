@@ -289,7 +289,7 @@ fn json_int_map(values : Map[String, Int]) -> String {
       out <+ ", "
     }
     let key = keys[index]
-    out <+ "\"{escape_json(key)}\": \{values[key]}"
+    out <+ "\"\{escape_json(key)}\": \{values[key]}"
   }
   out <+ "}"
   out.to_string()

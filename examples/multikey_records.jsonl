@@ -1,0 +1,4 @@
+{"id":"chain_a","label":"positive","keys":{"speaker_id":"speaker_a","source_doc":"doc_shared"}}
+{"id":"chain_b","label":"negative","keys":{"speaker_id":"speaker_b","source_doc":"doc_shared"}}
+{"id":"chain_c","label":"positive","keys":{"speaker_id":"speaker_b","source_doc":"doc_other"}}
+{"id":"isolated","label":"negative","keys":{"speaker_id":"speaker_c","source_doc":"doc_isolated"}}
