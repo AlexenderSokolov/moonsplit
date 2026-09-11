@@ -13,6 +13,47 @@ pub struct SplitPlan {
 } derive(Debug)
 
 ///|
+/// Deterministic record-count summary for one declared partition.
+pub struct PartitionSummary {
+  priv name : String
+  priv weight : Int
+  priv record_count : Int
+  priv target_bp : Int
+  priv actual_bp : Int
+  priv deviation_bp : Int
+} derive(Debug)
+
+///|
+pub fn PartitionSummary::name(self : PartitionSummary) -> String {
+  self.name
+}
+
+///|
+pub fn PartitionSummary::weight(self : PartitionSummary) -> Int {
+  self.weight
+}
+
+///|
+pub fn PartitionSummary::record_count(self : PartitionSummary) -> Int {
+  self.record_count
+}
+
+///|
+pub fn PartitionSummary::target_bp(self : PartitionSummary) -> Int {
+  self.target_bp
+}
+
+///|
+pub fn PartitionSummary::actual_bp(self : PartitionSummary) -> Int {
+  self.actual_bp
+}
+
+///|
+pub fn PartitionSummary::deviation_bp(self : PartitionSummary) -> Int {
+  self.deviation_bp
+}
+
+///|
 pub fn SplitPlan::kind(self : SplitPlan) -> @spec.SplitKind {
   self.kind
 }
@@ -60,6 +101,52 @@ pub fn SplitPlan::k(self : SplitPlan) -> Int {
 ///|
 pub fn SplitPlan::warnings(self : SplitPlan) -> Array[String] {
   self.warnings.copy()
+}
+
+///|
+/// Return partition summaries in declared specification order.
+pub fn SplitPlan::summaries(self : SplitPlan) -> Array[PartitionSummary] {
+  let partitions = self.partition_weights.copy()
+  let counts : Map[String, Int] = Map([])
+  for partition in partitions {
+    counts[partition.name()] = 0
+  }
+  for assignment in self.assignments {
+    match counts.get(assignment.partition()) {
+      Some(count) => counts[assignment.partition()] = count + 1
+      None => ()
+    }
+  }
+  let mut weight_sum = 0
+  for partition in partitions {
+    weight_sum += partition.weight()
+  }
+  let total = self.assignments.length()
+  let summaries : Array[PartitionSummary] = []
+  for partition in partitions {
+    let record_count = counts[partition.name()]
+    let target_bp = basis_points(partition.weight(), weight_sum)
+    let actual_bp = if total == 0 {
+      0
+    } else {
+      basis_points(record_count, total)
+    }
+    let raw_deviation = actual_bp - target_bp
+    let deviation_bp = if raw_deviation < 0 {
+      -raw_deviation
+    } else {
+      raw_deviation
+    }
+    summaries.push({
+      name: partition.name(),
+      weight: partition.weight(),
+      record_count,
+      target_bp,
+      actual_bp,
+      deviation_bp,
+    })
+  }
+  summaries
 }
 
 ///|
@@ -339,5 +426,15 @@ fn compare_strings(left : String, right : String) -> Int {
     1
   } else {
     0
+  }
+}
+
+///|
+/// Convert a non-negative ratio to basis points using half-up rounding.
+fn basis_points(numerator : Int, denominator : Int) -> Int {
+  if denominator <= 0 {
+    0
+  } else {
+    (numerator * 10000 + denominator / 2) / denominator
   }
 }

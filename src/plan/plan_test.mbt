@@ -93,6 +93,77 @@ test "twenty equal components split 16/2/2" {
 }
 
 ///|
+test "partition summaries report deterministic 8 to 1 to 1 basis points" {
+  let result = plan_split(equal_components(20), balanced_spec())
+  let plan = match result {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      SplitPlan::new(
+        Holdout,
+        [],
+        [],
+        @group.Components::new([]),
+        0U,
+        false,
+        0,
+        [],
+        0,
+        [],
+      )
+    }
+  }
+  let summaries = plan.summaries()
+  assert_eq(summaries.length(), 3)
+  assert_eq(summaries[0].name(), "train")
+  assert_eq(summaries[0].weight(), 8)
+  assert_eq(summaries[0].record_count(), 16)
+  assert_eq(summaries[0].target_bp(), 8000)
+  assert_eq(summaries[0].actual_bp(), 8000)
+  assert_eq(summaries[0].deviation_bp(), 0)
+  assert_eq(summaries[1].name(), "validation")
+  assert_eq(summaries[1].record_count(), 2)
+  assert_eq(summaries[1].target_bp(), 1000)
+  assert_eq(summaries[1].actual_bp(), 1000)
+  assert_eq(summaries[1].deviation_bp(), 0)
+  assert_eq(summaries[2].name(), "test")
+}
+
+///|
+test "partition summaries use half-up basis points and return an isolated array" {
+  let plan = SplitPlan::new(
+    Holdout,
+    ["speaker_id"],
+    [
+      @record.Assignment::new("a", "train"),
+      @record.Assignment::new("b", "validation"),
+      @record.Assignment::new("c", "validation"),
+    ],
+    @group.Components::new([]),
+    42U,
+    false,
+    500,
+    [@spec.Partition::new("train", 2), @spec.Partition::new("validation", 1)],
+    0,
+    [],
+  )
+  let summaries = plan.summaries()
+  assert_eq(summaries[0].target_bp(), 6667)
+  assert_eq(summaries[0].actual_bp(), 3333)
+  assert_eq(summaries[0].deviation_bp(), 3334)
+  assert_eq(summaries[1].target_bp(), 3333)
+  assert_eq(summaries[1].actual_bp(), 6667)
+  assert_eq(summaries[1].deviation_bp(), 3334)
+  let mut returned = summaries
+  let replacement = returned[1]
+  returned[0] = replacement
+  assert_eq(returned[0].name(), "validation")
+  let fresh = plan.summaries()
+  assert_eq(fresh[0].name(), "train")
+}
+
+///|
 test "a large component is kept and warned" {
   let records : Array[@record.Record] = []
   same_component(records, 0, 1, 0)

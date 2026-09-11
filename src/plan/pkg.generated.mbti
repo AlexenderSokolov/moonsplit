@@ -21,6 +21,16 @@ pub(all) enum FoldSide {
   Train
 } derive(Eq, @debug.Debug)
 
+pub struct PartitionSummary {
+  // private fields
+} derive(@debug.Debug)
+pub fn PartitionSummary::actual_bp(Self) -> Int
+pub fn PartitionSummary::deviation_bp(Self) -> Int
+pub fn PartitionSummary::name(Self) -> String
+pub fn PartitionSummary::record_count(Self) -> Int
+pub fn PartitionSummary::target_bp(Self) -> Int
+pub fn PartitionSummary::weight(Self) -> Int
+
 pub struct SplitPlan {
   // private fields
 } derive(@debug.Debug)
@@ -34,6 +44,7 @@ pub fn SplitPlan::new(@spec.SplitKind, Array[String], Array[@record.Assignment],
 pub fn SplitPlan::partition_weights(Self) -> Array[@spec.Partition]
 pub fn SplitPlan::ratio_tolerance_bp(Self) -> Int
 pub fn SplitPlan::seed(Self) -> UInt
+pub fn SplitPlan::summaries(Self) -> Array[PartitionSummary]
 pub fn SplitPlan::warnings(Self) -> Array[String]
 
 // Type aliases
