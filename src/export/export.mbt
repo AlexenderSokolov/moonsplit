@@ -104,6 +104,80 @@ pub fn summary_json(plan : @plan.SplitPlan) -> String {
 }
 
 ///|
+/// Stable machine-readable representation of an independent audit result.
+pub fn audit_report_json(
+  report : @audit.AuditReport,
+  spec : @spec.SplitSpec,
+  record_count : Int,
+  assignment_count : Int,
+) -> String {
+  let out = StringBuilder()
+  out <+ "{\n"
+  out <+ "  \"schema_version\": 1,\n"
+  out <+ "  \"valid\": \{report.is_valid()},\n"
+  out <+ "  \"records\": \{record_count},\n"
+  out <+ "  \"assignments\": \{assignment_count},\n"
+  out <+ "  \"partition_counts\": {\n"
+  let counts = report.partition_counts()
+  let names = spec.partition_names()
+  let declared : Map[String, Bool] = Map([])
+  for name in names {
+    declared[name] = true
+  }
+  let unknown : Array[String] = []
+  for name in counts.keys() {
+    if !declared.contains(name) {
+      unknown.push(name)
+    }
+  }
+  unknown.sort_by(compare_strings)
+  let all_names = names.copy()
+  for name in unknown {
+    all_names.push(name)
+  }
+  for index = 0; index < all_names.length(); index = index + 1 {
+    let name = all_names[index]
+    let count = match counts.get(name) {
+      Some(value) => value
+      None => 0
+    }
+    out <+ "    \"\{escape_json(name)}\": \{count}"
+    if index + 1 < all_names.length() {
+      out <+ ","
+    }
+    out <+ "\n"
+  }
+  out <+ "  },\n"
+  out <+ "  \"issues\": ["
+  let issues = report.issues()
+  if issues.length() > 0 {
+    out <+ "\n"
+    for index = 0; index < issues.length(); index = index + 1 {
+      let issue = issues[index]
+      let severity = match issue.severity() {
+        Error => "error"
+        Warning => "warning"
+      }
+      let line = match issue.line() {
+        Some(value) => value.to_string()
+        None => "null"
+      }
+      out <+
+        "    {\"severity\": \"\{severity}\", \"code\": \"\{escape_json(issue.code())}\", \"message\": \"\{escape_json(issue.message())}\", \"line\": \{line}}"
+      if index + 1 < issues.length() {
+        out <+ ","
+      }
+      out <+ "\n"
+    }
+    out <+ "  ]\n"
+  } else {
+    out <+ "]\n"
+  }
+  out <+ "}"
+  out.to_string()
+}
+
+///|
 pub fn report_markdown(plan : @plan.SplitPlan) -> String {
   let out = StringBuilder()
   out <+ "# MoonSplit Audit Report\n\n"
@@ -181,7 +255,7 @@ fn json_int_map(values : Map[String, Int]) -> String {
   for key in values.keys() {
     keys.push(key)
   }
-  keys.sort()
+  keys.sort_by(compare_strings)
   let out = StringBuilder()
   out <+ "{"
   for index = 0; index < keys.length(); index = index + 1 {
@@ -202,7 +276,7 @@ fn markdown_label_counts(values : Map[String, Int]) -> String {
   for key in values.keys() {
     keys.push(key)
   }
-  keys.sort()
+  keys.sort_by(compare_strings)
   if keys.length() == 0 {
     "None"
   } else {
@@ -216,6 +290,12 @@ fn markdown_label_counts(values : Map[String, Int]) -> String {
     }
     out.to_string()
   }
+}
+
+///|
+/// Lexicographic comparator shared by stable export orderings.
+fn compare_strings(left : String, right : String) -> Int {
+  left.lexical_compare(right)
 }
 
 ///|

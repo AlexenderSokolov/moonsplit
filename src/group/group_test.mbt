@@ -154,6 +154,22 @@ test "empty component diagnostics are explicit" {
 }
 
 ///|
+test "largest component tie uses dictionary order" {
+  let components = Components::new([
+    Component::new("z", ["z"], []),
+    Component::new("validation", ["validation"], []),
+  ])
+  let largest = match components.largest() {
+    Some(value) => value
+    None => {
+      assert_true(false)
+      Component::new("", [], [])
+    }
+  }
+  assert_eq(largest.id(), "validation")
+}
+
+///|
 fn map_of(entries : Array[(String, String)]) -> Map[String, String] {
   let map : Map[String, String] = Map([])
   for entry in entries {

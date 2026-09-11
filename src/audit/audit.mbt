@@ -26,7 +26,11 @@ pub fn AuditReport::issues(self : AuditReport) -> Array[@record.Issue] {
 
 ///|
 pub fn AuditReport::partition_counts(self : AuditReport) -> Map[String, Int] {
-  self.partition_counts
+  let copied : Map[String, Int] = Map([])
+  for partition in self.partition_counts.keys() {
+    copied[partition] = self.partition_counts[partition]
+  }
+  copied
 }
 
 ///|

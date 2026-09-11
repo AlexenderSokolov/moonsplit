@@ -99,6 +99,19 @@ test "audit detects an empty declared partition" {
 }
 
 ///|
+test "audit partition counts are returned as an isolated copy" {
+  let counts : Map[String, Int] = Map([])
+  counts["train"] = 2
+  let report = AuditReport::new(true, [], counts)
+  let returned = report.partition_counts()
+  returned["train"] = 99
+  match report.partition_counts().get("train") {
+    Some(value) => assert_eq(value, 2)
+    None => assert_true(false)
+  }
+}
+
+///|
 fn map_of(entries : Array[(String, String)]) -> Map[String, String] {
   let map : Map[String, String] = Map([])
   for entry in entries {

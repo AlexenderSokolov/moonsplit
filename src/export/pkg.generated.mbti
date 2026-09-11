@@ -2,11 +2,15 @@
 package "AlexenderSokolov/moonsplit/src/export"
 
 import {
+  "AlexenderSokolov/moonsplit/src/audit",
   "AlexenderSokolov/moonsplit/src/plan",
+  "AlexenderSokolov/moonsplit/src/spec",
 }
 
 // Values
 pub fn assignments_jsonl(@plan.SplitPlan) -> String
+
+pub fn audit_report_json(@audit.AuditReport, @spec.SplitSpec, Int, Int) -> String
 
 pub fn components_jsonl(@plan.SplitPlan) -> String
 

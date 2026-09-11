@@ -92,7 +92,7 @@ pub fn SplitSpec::to_json(self : SplitSpec) -> String {
   }
   out <+ "  \"kind\": \"\{kind_name}\",\n"
   let isolation_keys = self.isolation_keys.copy()
-  isolation_keys.sort()
+  isolation_keys.sort_by((left, right) => left.lexical_compare(right))
   out <+ "  \"isolation_keys\": ["
   for index = 0; index < isolation_keys.length(); index = index + 1 {
     if index > 0 {

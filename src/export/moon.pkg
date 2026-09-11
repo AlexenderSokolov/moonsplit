@@ -3,4 +3,5 @@ import {
   "AlexenderSokolov/moonsplit/src/spec",
   "AlexenderSokolov/moonsplit/src/plan",
   "AlexenderSokolov/moonsplit/src/group",
+  "AlexenderSokolov/moonsplit/src/audit",
 }

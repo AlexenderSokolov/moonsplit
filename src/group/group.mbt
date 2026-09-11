@@ -121,7 +121,10 @@ pub fn Components::largest(self : Components) -> Component? {
       None => largest = Some(group)
       Some(current) =>
         if group.size() > current.size() ||
-          (group.size() == current.size() && group.id() < current.id()) {
+          (
+            group.size() == current.size() &&
+            group.id().lexical_compare(current.id()) < 0
+          ) {
           largest = Some(group)
         }
     }

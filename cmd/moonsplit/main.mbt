@@ -5,7 +5,7 @@ fn usage() -> String {
     #|
     #|Usage:
     #|  moon run cmd/moonsplit -- plan --data <records> --spec <spec> --out <dir> [--format json|jsonl]
-    #|  moon run cmd/moonsplit -- audit --data <records> --spec <spec> --assignments <manifest> [--format json|jsonl]
+    #|  moon run cmd/moonsplit -- audit --data <records> --spec <spec> --assignments <manifest> [--format json|jsonl] [--report text|json]
     #|  moon run cmd/moonsplit -- normalize-spec --spec <spec>
     #|  moon run cmd/moonsplit -- demo --out <dir>
     #|  moon run cmd/moonsplit -- bench --records 100000 --speakers 20000
@@ -109,20 +109,37 @@ fn run_plan_command(args : Array[String]) -> Unit {
 ///|
 fn run_audit_command(args : Array[String]) -> Unit {
   match
-    parse_flags(args, 2, ["--data", "--spec", "--assignments", "--format"]) {
+    parse_flags(args, 2, [
+      "--data", "--spec", "--assignments", "--format", "--report",
+    ]) {
     Err(message) => fail_usage(message)
     Ok(flags) => {
       let data_path = require_flag(flags, "--data")
       let spec_path = require_flag(flags, "--spec")
       let assignments_path = require_flag(flags, "--assignments")
       let format = command_format(flags, data_path)
+      let report_format = command_report_format(flags)
       let records = load_records(data_path, format)
       let spec = load_spec(spec_path)
       let assignments = load_assignments(assignments_path)
       match @audit.audit_split(records, spec, assignments) {
         Err(issues) => fail_input(issues)
         Ok(report) =>
-          if report.is_valid() {
+          if report_format == "json" {
+            println(
+              @export.audit_report_json(
+                report,
+                spec,
+                records.length(),
+                assignments.length(),
+              ),
+            )
+            if report.is_valid() {
+              @sys.exit(0)
+            } else {
+              @sys.exit(3)
+            }
+          } else if report.is_valid() {
             println("audit=pass")
             println("records=\{records.length()}")
             println("assignments=\{assignments.length()}")
@@ -276,6 +293,21 @@ fn command_format(
         }
       }
     None => if path.to_lower().has_suffix(".jsonl") { Jsonl } else { Json }
+  }
+}
+
+///|
+fn command_report_format(flags : Map[String, String]) -> String {
+  match flags.get("--report") {
+    None => "text"
+    Some("text") => "text"
+    Some("json") => "json"
+    Some(_) => {
+      println("error: report must be text or json")
+      println(usage())
+      @sys.exit(2)
+      "text"
+    }
   }
 }
 

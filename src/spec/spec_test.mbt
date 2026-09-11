@@ -116,3 +116,17 @@ test "spec JSON escapes control characters" {
   assert_true(json.contains("line\\nbreak"))
   assert_true(json.contains("quote\\\"key"))
 }
+
+///|
+test "spec JSON uses dictionary order instead of shortlex order" {
+  let input = "{\"schema_version\":1,\"kind\":\"kfold\",\"isolation_keys\":[\"z\",\"validation\"],\"k\":2}"
+  let spec = match parse_spec(input) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      SplitSpec::new(KFold, [], 0U, false, 0, [], 2)
+    }
+  }
+  assert_true(spec.to_json().contains("[\"validation\", \"z\"]"))
+}
