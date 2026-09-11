@@ -313,6 +313,65 @@ test "label balancing uses integer component targets" {
 }
 
 ///|
+test "partition summaries retain empty labels and unlabeled counts" {
+  let records : Array[@record.Record] = []
+  let labels : Array[String?] = [Some("z"), Some(""), None, Some("a")]
+  for index = 0; index < labels.length(); index = index + 1 {
+    let keys : Map[String, String] = Map([])
+    keys["speaker_id"] = "speaker_\{index}"
+    records.push(@record.Record::new("record_\{index}", labels[index], keys))
+  }
+  let spec = @spec.SplitSpec::new(
+    Holdout,
+    ["speaker_id"],
+    42U,
+    false,
+    500,
+    [@spec.Partition::new("train", 1), @spec.Partition::new("test", 1)],
+    0,
+  )
+  let plan = match plan_split(records, spec) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      SplitPlan::new(
+        Holdout,
+        [],
+        [],
+        @group.Components::new([]),
+        0U,
+        false,
+        0,
+        [],
+        0,
+        [],
+      )
+    }
+  }
+  let mut z_count = 0
+  let mut empty_count = 0
+  let mut unlabeled_count = 0
+  for summary in plan.summaries() {
+    match summary.label_counts().get("z") {
+      Some(value) => z_count += value
+      None => ()
+    }
+    match summary.label_counts().get("") {
+      Some(value) => empty_count += value
+      None => ()
+    }
+    unlabeled_count += summary.unlabeled_count()
+  }
+  assert_eq(z_count, 1)
+  assert_eq(empty_count, 1)
+  assert_eq(unlabeled_count, 1)
+  let first = plan.summaries()[0].label_counts()
+  first["tampered"] = 99
+  assert_true(plan.summaries()[0].label_counts().get("tampered") is None)
+}
+
+///|
 fn index_of_id(records : Array[@record.Record], id : String) -> Int {
   for index = 0; index < records.length(); index = index + 1 {
     if records[index].id() == id {

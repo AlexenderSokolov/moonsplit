@@ -14,6 +14,8 @@ pub fn plan_json(@plan.SplitPlan) -> String
 
 pub fn report_markdown(@plan.SplitPlan) -> String
 
+pub fn summary_json(@plan.SplitPlan) -> String
+
 // Errors
 
 // Types and methods

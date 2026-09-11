@@ -368,6 +368,7 @@ fn write_plan_output(
     ("assignments.jsonl", @export.assignments_jsonl(plan)),
     ("components.jsonl", @export.components_jsonl(plan)),
     ("report.md", @export.report_markdown(plan)),
+    ("summary.json", @export.summary_json(plan)),
   ]
   for file in files {
     let path = "\{out_path}/\{file.0}"
@@ -378,7 +379,7 @@ fn write_plan_output(
         }
     }
   }
-  Ok(4)
+  Ok(files.length())
 }
 
 ///|

@@ -10,6 +10,8 @@ pub struct SplitPlan {
   priv partition_weights : Array[@spec.Partition]
   priv k : Int
   priv warnings : Array[String]
+  priv partition_label_counts : Array[Map[String, Int]]
+  priv partition_unlabeled_counts : Array[Int]
 } derive(Debug)
 
 ///|
@@ -21,6 +23,8 @@ pub struct PartitionSummary {
   priv target_bp : Int
   priv actual_bp : Int
   priv deviation_bp : Int
+  priv label_counts : Map[String, Int]
+  priv unlabeled_count : Int
 } derive(Debug)
 
 ///|
@@ -51,6 +55,18 @@ pub fn PartitionSummary::actual_bp(self : PartitionSummary) -> Int {
 ///|
 pub fn PartitionSummary::deviation_bp(self : PartitionSummary) -> Int {
   self.deviation_bp
+}
+
+///|
+pub fn PartitionSummary::label_counts(
+  self : PartitionSummary,
+) -> Map[String, Int] {
+  copy_int_map(self.label_counts)
+}
+
+///|
+pub fn PartitionSummary::unlabeled_count(self : PartitionSummary) -> Int {
+  self.unlabeled_count
 }
 
 ///|
@@ -137,6 +153,18 @@ pub fn SplitPlan::summaries(self : SplitPlan) -> Array[PartitionSummary] {
     } else {
       raw_deviation
     }
+    let summary_index = summaries.length()
+    let label_counts = if summary_index < self.partition_label_counts.length() {
+      self.partition_label_counts[summary_index]
+    } else {
+      Map([])
+    }
+    let unlabeled_count = if summary_index <
+      self.partition_unlabeled_counts.length() {
+      self.partition_unlabeled_counts[summary_index]
+    } else {
+      0
+    }
     summaries.push({
       name: partition.name(),
       weight: partition.weight(),
@@ -144,6 +172,8 @@ pub fn SplitPlan::summaries(self : SplitPlan) -> Array[PartitionSummary] {
       target_bp,
       actual_bp,
       deviation_bp,
+      label_counts: copy_int_map(label_counts),
+      unlabeled_count,
     })
   }
   summaries
@@ -290,6 +320,7 @@ pub fn plan_split(
     spec.k(),
     warnings,
   )
+  let plan = with_label_statistics(plan, records)
   let audit_result = @audit.audit_split(records, spec, plan.assignments())
   match audit_result {
     Err(issues) => return Err(issues)
@@ -315,6 +346,12 @@ pub fn SplitPlan::new(
   sorted_assignments.sort_by((left, right) => {
     compare_strings(left.id(), right.id())
   })
+  let partition_label_counts : Array[Map[String, Int]] = []
+  let partition_unlabeled_counts : Array[Int] = []
+  for _partition in partition_weights {
+    partition_label_counts.push(Map([]))
+    partition_unlabeled_counts.push(0)
+  }
   {
     kind,
     isolation_keys: isolation_keys.copy(),
@@ -326,6 +363,8 @@ pub fn SplitPlan::new(
     partition_weights: partition_weights.copy(),
     k,
     warnings: warnings.copy(),
+    partition_label_counts,
+    partition_unlabeled_counts,
   }
 }
 
@@ -416,6 +455,70 @@ fn plan_warnings(
     }
   }
   warnings
+}
+
+///|
+/// Attach per-partition label statistics without changing the public constructor.
+fn with_label_statistics(
+  plan : SplitPlan,
+  records : Array[@record.Record],
+) -> SplitPlan {
+  let labels : Map[String, String] = Map([])
+  for record in records {
+    match record.label() {
+      Some(label) => labels[record.id()] = label
+      None => ()
+    }
+  }
+  let partition_indices : Map[String, Int] = Map([])
+  let partitions = plan.partition_weights.copy()
+  for index = 0; index < partitions.length(); index = index + 1 {
+    partition_indices[partitions[index].name()] = index
+  }
+  let label_counts : Array[Map[String, Int]] = []
+  let unlabeled_counts : Array[Int] = []
+  for _partition in partitions {
+    label_counts.push(Map([]))
+    unlabeled_counts.push(0)
+  }
+  for assignment in plan.assignments {
+    match partition_indices.get(assignment.partition()) {
+      Some(index) =>
+        match labels.get(assignment.id()) {
+          Some(label) =>
+            match label_counts[index].get(label) {
+              Some(count) => label_counts[index][label] = count + 1
+              None => label_counts[index][label] = 1
+            }
+          None => unlabeled_counts[index] = unlabeled_counts[index] + 1
+        }
+      None => ()
+    }
+  }
+  {
+    kind: plan.kind,
+    isolation_keys: plan.isolation_keys.copy(),
+    assignments: plan.assignments.copy(),
+    components: plan.components,
+    seed: plan.seed,
+    balance_labels: plan.balance_labels,
+    ratio_tolerance_bp: plan.ratio_tolerance_bp,
+    partition_weights: plan.partition_weights.copy(),
+    k: plan.k,
+    warnings: plan.warnings.copy(),
+    partition_label_counts: label_counts,
+    partition_unlabeled_counts: unlabeled_counts,
+  }
+}
+
+///|
+/// Copy an integer map before exposing it through a public value.
+fn copy_int_map(source : Map[String, Int]) -> Map[String, Int] {
+  let copied : Map[String, Int] = Map([])
+  for key in source.keys() {
+    copied[key] = source[key]
+  }
+  copied
 }
 
 ///|

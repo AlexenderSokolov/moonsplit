@@ -26,9 +26,11 @@ pub struct PartitionSummary {
 } derive(@debug.Debug)
 pub fn PartitionSummary::actual_bp(Self) -> Int
 pub fn PartitionSummary::deviation_bp(Self) -> Int
+pub fn PartitionSummary::label_counts(Self) -> Map[String, Int]
 pub fn PartitionSummary::name(Self) -> String
 pub fn PartitionSummary::record_count(Self) -> Int
 pub fn PartitionSummary::target_bp(Self) -> Int
+pub fn PartitionSummary::unlabeled_count(Self) -> Int
 pub fn PartitionSummary::weight(Self) -> Int
 
 pub struct SplitPlan {

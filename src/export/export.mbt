@@ -73,6 +73,37 @@ pub fn components_jsonl(plan : @plan.SplitPlan) -> String {
 }
 
 ///|
+/// Stable machine-readable summary including component and label diagnostics.
+pub fn summary_json(plan : @plan.SplitPlan) -> String {
+  let out = StringBuilder()
+  out <+ "{\n"
+  out <+ "  \"schema_version\": 1,\n"
+  out <+ "  \"algorithm\": \"group-greedy-v1\",\n"
+  out <+ "  \"records\": \{plan.components().total_records()},\n"
+  out <+ "  \"components\": \{plan.components().count()},\n"
+  match plan.components().largest() {
+    Some(component) =>
+      out <+
+        "  \"largest_component\": {\"id\": \"\{escape_json(component.id())}\", \"size\": \{component.size()}},\n"
+    None => out <+ "  \"largest_component\": null,\n"
+  }
+  out <+ "  \"partitions\": [\n"
+  let summaries = plan.summaries()
+  for index = 0; index < summaries.length(); index = index + 1 {
+    let summary = summaries[index]
+    out <+
+      "    {\"name\": \"\{escape_json(summary.name())}\", \"weight\": \{summary.weight()}, \"record_count\": \{summary.record_count()}, \"target_bp\": \{summary.target_bp()}, \"actual_bp\": \{summary.actual_bp()}, \"deviation_bp\": \{summary.deviation_bp()}, \"label_counts\": \{json_int_map(summary.label_counts())}, \"unlabeled_count\": \{summary.unlabeled_count()}}"
+    if index + 1 < summaries.length() {
+      out <+ ","
+    }
+    out <+ "\n"
+  }
+  out <+ "  ]\n"
+  out <+ "}"
+  out.to_string()
+}
+
+///|
 pub fn report_markdown(plan : @plan.SplitPlan) -> String {
   let out = StringBuilder()
   out <+ "# MoonSplit Audit Report\n\n"
@@ -83,15 +114,19 @@ pub fn report_markdown(plan : @plan.SplitPlan) -> String {
   out <+ "- Components: \{plan.components().count()}\n"
   out <+ "- Assignments: \{plan.assignments().length()}\n\n"
   out <+ "## Partitions\n\n"
-  out <+ "| Partition | Weight | Records |\n"
-  out <+ "|---|---:|---:|\n"
-  let counts = partition_counts(plan)
-  for partition in plan.partition_weights() {
-    let count = match counts.get(partition.name()) {
-      Some(value) => value
-      None => 0
-    }
-    out <+ "| `\{partition.name()}` | \{partition.weight()} | \{count} |\n"
+  out <+
+    "| Partition | Weight | Target (bp) | Actual (bp) | Deviation (bp) | Records |\n"
+  out <+ "|---|---:|---:|---:|---:|---:|\n"
+  for summary in plan.summaries() {
+    out <+
+      "| `\{summary.name()}` | \{summary.weight()} | \{summary.target_bp()} | \{summary.actual_bp()} | \{summary.deviation_bp()} | \{summary.record_count()} |\n"
+  }
+  out <+ "\n## Labels\n\n"
+  out <+ "| Partition | Label counts | Unlabeled |\n"
+  out <+ "|---|---|---:|\n"
+  for summary in plan.summaries() {
+    out <+
+      "| `\{summary.name()}` | \{markdown_label_counts(summary.label_counts())} | \{summary.unlabeled_count()} |\n"
   }
   out <+ "\n## Warnings\n\n"
   let warnings = plan.warnings()
@@ -103,21 +138,6 @@ pub fn report_markdown(plan : @plan.SplitPlan) -> String {
     }
   }
   out.to_string()
-}
-
-///|
-fn partition_counts(plan : @plan.SplitPlan) -> Map[String, Int] {
-  let counts : Map[String, Int] = Map([])
-  for partition in plan.partition_weights() {
-    counts[partition.name()] = 0
-  }
-  for assignment in plan.assignments() {
-    match counts.get(assignment.partition()) {
-      Some(count) => counts[assignment.partition()] = count + 1
-      None => counts[assignment.partition()] = 1
-    }
-  }
-  counts
 }
 
 ///|
@@ -152,6 +172,50 @@ fn markdown_code_list(values : Array[String]) -> String {
     out <+ "`\{values[index]}`"
   }
   out.to_string()
+}
+
+///|
+/// Serialize a string-to-integer map with sorted keys.
+fn json_int_map(values : Map[String, Int]) -> String {
+  let keys : Array[String] = []
+  for key in values.keys() {
+    keys.push(key)
+  }
+  keys.sort()
+  let out = StringBuilder()
+  out <+ "{"
+  for index = 0; index < keys.length(); index = index + 1 {
+    if index > 0 {
+      out <+ ", "
+    }
+    let key = keys[index]
+    out <+ "\"{escape_json(key)}\": \{values[key]}"
+  }
+  out <+ "}"
+  out.to_string()
+}
+
+///|
+/// Render label counts in stable key order for the Markdown report.
+fn markdown_label_counts(values : Map[String, Int]) -> String {
+  let keys : Array[String] = []
+  for key in values.keys() {
+    keys.push(key)
+  }
+  keys.sort()
+  if keys.length() == 0 {
+    "None"
+  } else {
+    let out = StringBuilder()
+    for index = 0; index < keys.length(); index = index + 1 {
+      if index > 0 {
+        out <+ ", "
+      }
+      let key = keys[index]
+      out <+ "`\{key}`=\{values[key]}"
+    }
+    out.to_string()
+  }
 }
 
 ///|
