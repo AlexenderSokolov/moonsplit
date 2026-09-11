@@ -129,6 +129,31 @@ test "witness edges are canonical for reversed input" {
 }
 
 ///|
+test "component diagnostics count records and choose the smallest tied id" {
+  let components = Components::new([
+    Component::new("z", ["z1", "z2"], []),
+    Component::new("a", ["a1", "a2"], []),
+  ])
+  assert_eq(components.total_records(), 4)
+  let largest = match components.largest() {
+    Some(value) => value
+    None => {
+      assert_true(false)
+      Component::new("", [], [])
+    }
+  }
+  assert_eq(largest.id(), "a")
+  assert_eq(largest.size(), 2)
+}
+
+///|
+test "empty component diagnostics are explicit" {
+  let components = Components::new([])
+  assert_eq(components.total_records(), 0)
+  assert_true(components.largest() is None)
+}
+
+///|
 fn map_of(entries : Array[(String, String)]) -> Map[String, String] {
   let map : Map[String, String] = Map([])
   for entry in entries {

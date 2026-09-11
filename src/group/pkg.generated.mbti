@@ -19,6 +19,7 @@ pub fn Component::add_member(Self, String) -> Unit
 pub fn Component::id(Self) -> String
 pub fn Component::member_ids(Self) -> Array[String]
 pub fn Component::new(String, Array[String], Array[RelationEdge]) -> Self
+pub fn Component::size(Self) -> Int
 pub fn Component::witness_edges(Self) -> Array[RelationEdge]
 
 pub struct Components {
@@ -26,7 +27,9 @@ pub struct Components {
 } derive(@debug.Debug)
 pub fn Components::count(Self) -> Int
 pub fn Components::groups(Self) -> Array[Component]
+pub fn Components::largest(Self) -> Component?
 pub fn Components::new(Array[Component]) -> Self
+pub fn Components::total_records(Self) -> Int
 
 pub struct RelationEdge {
   // private fields

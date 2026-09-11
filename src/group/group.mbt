@@ -82,6 +82,12 @@ pub fn Component::member_ids(self : Component) -> Array[String] {
 }
 
 ///|
+/// Number of records contained in this component.
+pub fn Component::size(self : Component) -> Int {
+  self.member_ids.length()
+}
+
+///|
 pub fn Component::witness_edges(self : Component) -> Array[RelationEdge] {
   self.witness_edges.copy()
 }
@@ -94,6 +100,33 @@ pub fn Components::groups(self : Components) -> Array[Component] {
 ///|
 pub fn Components::count(self : Components) -> Int {
   self.groups.length()
+}
+
+///|
+/// Number of records across all components.
+pub fn Components::total_records(self : Components) -> Int {
+  let mut total = 0
+  for group in self.groups {
+    total += group.size()
+  }
+  total
+}
+
+///|
+/// Largest component, breaking ties by the lexicographically smallest id.
+pub fn Components::largest(self : Components) -> Component? {
+  let mut largest : Component? = None
+  for group in self.groups {
+    match largest {
+      None => largest = Some(group)
+      Some(current) =>
+        if group.size() > current.size() ||
+          (group.size() == current.size() && group.id() < current.id()) {
+          largest = Some(group)
+        }
+    }
+  }
+  largest
 }
 
 ///|
