@@ -11,7 +11,7 @@ pub fn AuditReport::new(
   issues : Array[@record.Issue],
   partition_counts : Map[String, Int],
 ) -> AuditReport {
-  { is_valid, issues: issues.copy(), partition_counts }
+  { is_valid, issues: issues.copy(), partition_counts, }
 }
 
 ///|

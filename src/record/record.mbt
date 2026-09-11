@@ -41,7 +41,7 @@ pub fn Record::new(
   for key in keys.keys() {
     copied[key] = keys[key]
   }
-  { id, label, keys: copied }
+  { id, label, keys: copied, }
 }
 
 ///|
@@ -75,7 +75,7 @@ pub fn Record::snapshot(self : Record) -> Record {
 
 ///|
 pub fn Assignment::new(id : String, partition : String) -> Assignment {
-  { id, partition }
+  { id, partition, }
 }
 
 ///|
@@ -90,7 +90,7 @@ pub fn Assignment::partition(self : Assignment) -> String {
 
 ///|
 pub fn Issue::error(code : String, message : String) -> Issue {
-  { severity: Error, code, message, line: None }
+  { severity: Error, code, message, line: None, }
 }
 
 ///|
@@ -99,12 +99,12 @@ pub fn Issue::error_at_line(
   message : String,
   line : Int,
 ) -> Issue {
-  { severity: Error, code, message, line: Some(line) }
+  { severity: Error, code, message, line: Some(line), }
 }
 
 ///|
 pub fn Issue::warning(code : String, message : String) -> Issue {
-  { severity: Warning, code, message, line: None }
+  { severity: Warning, code, message, line: None, }
 }
 
 ///|

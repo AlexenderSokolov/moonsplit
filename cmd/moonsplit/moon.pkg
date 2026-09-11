@@ -11,6 +11,4 @@ import {
   "AlexenderSokolov/moonsplit/src/export",
 }
 
-options(
-  "is-main": true,
-)
+pkgtype(kind: "executable")

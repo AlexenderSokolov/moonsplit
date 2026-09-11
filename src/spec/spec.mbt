@@ -23,7 +23,7 @@ pub struct SplitSpec {
 
 ///|
 pub fn Partition::new(name : String, weight : Int) -> Partition {
-  { name, weight }
+  { name, weight, }
 }
 
 ///|

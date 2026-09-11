@@ -139,7 +139,7 @@ pub fn RelationEdge::new(
   key_name : String,
   key_value : String,
 ) -> RelationEdge {
-  { left_id, right_id, key_name, key_value }
+  { left_id, right_id, key_name, key_value, }
 }
 
 ///|
@@ -148,7 +148,7 @@ pub fn Component::new(
   member_ids : Array[String],
   witness_edges : Array[RelationEdge],
 ) -> Component {
-  { id, member_ids: member_ids.copy(), witness_edges: witness_edges.copy() }
+  { id, member_ids: member_ids.copy(), witness_edges: witness_edges.copy(), }
 }
 
 ///|
@@ -158,7 +158,7 @@ pub fn Component::add_member(self : Component, id : String) -> Unit {
 
 ///|
 pub fn Components::new(groups : Array[Component]) -> Components {
-  { groups: groups.copy() }
+  { groups: groups.copy(), }
 }
 
 ///|
