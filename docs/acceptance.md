@@ -1,12 +1,12 @@
 # 验收记录
 
-## 0.2.0 实现与本地验收证据 - 2026-09-11
+## 0.2.0 实现与验收证据 - 2026-09-12
 
 ### 实际提交范围
 
-- 实现范围：`a4fb8d4..1f891ea`，共 12 个提交；其中包含 10 个主线功能/测试增量、1 个 worktree 忽略配置提交和 1 个 v0.2.0 release preparation 提交。
+- 实际提交范围：`a4fb8d4..40bc7a5`，共 16 个提交；其中包含 10 个主线功能/测试增量、1 个 worktree 忽略配置提交、1 个 v0.2.0 release preparation 提交、1 个验收记录提交和 3 个针对最新 MoonBit CI 工具链的格式/接口/警告兼容提交。
 - 主线提交依次覆盖 assignment 诊断、canonical spec、组件诊断、分区摘要、标签 summary、比例 warning、audit JSON、K-fold manifest、validate preflight 和完整验收矩阵。
-- 本条验收记录随后作为独立的文档提交加入，不计作功能凑数。
+- 此前的 `9a3c13c` 已将本地验收记录作为独立文档提交加入；本次更新只补充公开 push 与 CI 证据，不计作功能凑数。
 
 ### 已验证
 
@@ -19,11 +19,16 @@
 - `run_check.ps1`：通过；覆盖 canonical normalize、holdout 5 文件、K-fold 6 文件、summary/folds 内容、audit JSON 成功/失败、validate 无写入、空 assignment 的 2、audit 语义失败的 3 和输出错误的 4。
 - `run_check.sh`：通过 Git for Windows login Bash 执行；同样覆盖 wasm-gc/JS 字节一致性、内容断言和 `moon fmt --check`。
 - `run_bench.ps1` 与 `run_bench.sh`：均输出 `bench=ok`、`records=100000`、`components=20000`、`assignments=100000`。
-- 最终 feature worktree `codex/moonsplit-v0.2` 清洁，`git diff --check` 通过。
+- `git diff --check`：通过；nested repository 的 `main` 工作树清洁。
+- GitHub Actions `ci` run `34623390996`（提交 `40bc7a5`）：通过 Format、Public interface、Typecheck、Build、MoonBit 测试、JS 测试和端到端检查。
 
-### 未执行的外部动作
+### 已执行的外部动作
 
-- 未执行 tag、远端 push、GitHub/GitLink 同步、CI 远端运行、Mooncakes publish 或干净安装验证；这些动作需要本轮之外的明确授权。
+- 按本轮授权已直接 push 到 GitHub `main`：`origin/main = 40bc7a5`。
+
+### 尚未执行的外部动作
+
+- 未执行 tag、GitLink 同步、Mooncakes publish 或干净安装验证；本轮授权范围仅为直接 push `main`。
 
 ## 0.1.1 - 2026-09-06
 
@@ -91,8 +96,9 @@
 
 - 当前本机 `moon` 版本为 `0.1.20260703`。
 - `moon.mod` 暂时固定在 `moonbitlang/x@0.4.46`：本次尝试升级到 `x@0.5.1` 时，Mooncakes registry 连接失败且本机索引无该版本；待网络可用后应重试并重跑双目标验收。
-- `ratio_tolerance_bp` 是 v0.1.0 的元数据，不参与计划或审计的硬校验。
+- `ratio_tolerance_bp` 在 v0.2 中产生非致命 warning；比例阈值比较使用无舍入交叉乘法，等于阈值不告警。
 - 独立 review 提出的整数截断、rooted 路径父目录、NUL 关联键和父目录错误信息问题已修复并回归。
+- 本机 `moon 0.1.20260703` 不能解析最新 CI 工具链要求的 `pkgtype` 语法；因此当前提交的最新格式、接口、构建和双目标验收以 GitHub Actions run `34623390996` 为准。
 
 ## 边界
 
