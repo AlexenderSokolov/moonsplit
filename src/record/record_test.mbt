@@ -29,3 +29,29 @@ test "parse JSON accepts a UTF-8 byte order mark" {
     }
   }
 }
+
+///|
+test "parse assignments rejects an empty id with its line number" {
+  let input = "{\"id\":\"\",\"partition\":\"train\"}\n"
+  match parse_assignments(input) {
+    Ok(_) => assert_true(false)
+    Err(issues) => {
+      assert_eq(issues.length(), 1)
+      assert_eq(issues[0].code(), "empty_assignment_id")
+      @test.assert_eq(issues[0].line(), Some(1))
+    }
+  }
+}
+
+///|
+test "parse assignments rejects an empty partition with its line number" {
+  let input = "{\"id\":\"a\",\"partition\":\"train\"}\n{\"id\":\"b\",\"partition\":\"\"}\n"
+  match parse_assignments(input) {
+    Ok(_) => assert_true(false)
+    Err(issues) => {
+      assert_eq(issues.length(), 1)
+      assert_eq(issues[0].code(), "empty_assignment_partition")
+      @test.assert_eq(issues[0].line(), Some(2))
+    }
+  }
+}

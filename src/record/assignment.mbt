@@ -56,6 +56,14 @@ pub fn parse_assignments(
         continue
       }
     }
+    if id == "" {
+      issues.push(
+        Issue::error_at_line(
+          "empty_assignment_id", "assignment id cannot be empty", line_number,
+        ),
+      )
+      continue
+    }
     let partition = match obj.get("partition") {
       Some(String(value)) => value
       Some(_) => {
@@ -75,6 +83,14 @@ pub fn parse_assignments(
         )
         continue
       }
+    }
+    if partition == "" {
+      issues.push(
+        Issue::error_at_line(
+          "empty_assignment_partition", "assignment partition cannot be empty", line_number,
+        ),
+      )
+      continue
     }
     assignments.push(Assignment::new(id, partition))
   }
