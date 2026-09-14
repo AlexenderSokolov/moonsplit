@@ -184,7 +184,10 @@ $gitSha = [string]::Join("", ($gitShaLines | ForEach-Object { $_.ToString() })).
 if ($gitSha -eq "") { throw "git rev-parse HEAD returned an empty SHA" }
 $gitStatusLines = @(& git -c "safe.directory=$PSScriptRoot" status --short 2>&1)
 if ($LASTEXITCODE -ne 0) { throw "git status failed with exit code $LASTEXITCODE" }
-$gitStatus = [string]::Join("`n", ($gitStatusLines | ForEach-Object { $_.ToString() }))
+# A clean worktree produces no pipeline object in PowerShell. `-join` maps
+# that case to an empty string, while .NET String.Join receives null and
+# aborts the formal evidence run.
+$gitStatus = ($gitStatusLines | ForEach-Object { $_.ToString() }) -join "`n"
 # Do not require a privileged WMI/CIM query merely to capture provenance.  The
 # environment APIs are available in restricted CI and desktop sessions alike.
 $processorName = [System.Environment]::GetEnvironmentVariable("PROCESSOR_IDENTIFIER")
