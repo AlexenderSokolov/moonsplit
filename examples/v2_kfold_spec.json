@@ -1,0 +1,11 @@
+{
+  "schema_version": 2,
+  "kind": "kfold",
+  "seed": 42,
+  "k": 2,
+  "rules": [
+    {"id": "speaker", "type": "exact_key", "key": "speaker"},
+    {"id": "duplicate", "type": "text_jaccard", "q": 3, "threshold_bp": 8000},
+    {"id": "window", "type": "interval_overlap", "source_key": "source", "interval": "segment"}
+  ]
+}

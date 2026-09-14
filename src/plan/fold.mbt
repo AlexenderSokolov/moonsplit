@@ -36,6 +36,6 @@ pub fn fold_members(
       ids.push(assignment.id())
     }
   }
-  ids.sort()
+  ids.sort_by((left, right) => left.lexical_compare(right))
   Ok(ids)
 }

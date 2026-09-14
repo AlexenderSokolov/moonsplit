@@ -1,0 +1,15 @@
+{
+  "schema_version": 2,
+  "kind": "holdout",
+  "seed": 42,
+  "algorithm": "group-local-v2",
+  "partitions": [
+    {"name": "train", "weight": 1},
+    {"name": "test", "weight": 1}
+  ],
+  "rules": [
+    {"id": "window", "type": "interval_overlap", "source_key": "source", "interval": "segment"},
+    {"id": "duplicate", "type": "text_jaccard", "q": 3, "threshold_bp": 8000},
+    {"id": "speaker", "type": "exact_key", "key": "speaker"}
+  ]
+}

@@ -39,6 +39,10 @@ pub fn audit_split(
   spec : @spec.SplitSpec,
   assignments : Array[@record.Assignment],
 ) -> Result[AuditReport, Array[@record.Issue]] {
+  match @spec.validate_split_spec(spec) {
+    Ok(_) => ()
+    Err(issues) => return Err(issues)
+  }
   let issues : Array[@record.Issue] = []
   let record_ids : Map[String, Bool] = Map([])
   for record in records {

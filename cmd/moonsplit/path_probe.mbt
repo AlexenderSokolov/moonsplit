@@ -19,5 +19,5 @@ test "parent path preserves rooted subpaths" {
 
 ///|
 test "version text matches the package version" {
-  assert_eq(version_text(), "MoonSplit 0.2.0")
+  assert_eq(version_text(), "MoonSplit 0.3.0")
 }

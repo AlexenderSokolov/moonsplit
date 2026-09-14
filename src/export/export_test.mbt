@@ -198,3 +198,72 @@ test "summary JSON sorts labels within a partition" {
     summary_json(plan).contains("\"label_counts\": {\"a\": 1, \"z\": 1}"),
   )
 }
+
+///|
+test "v2 summary preserves targets when partition weights exceed Int totals" {
+  let records = match
+    @record.parse_v2_records(
+      "[{\"id\":\"a\",\"keys\":{\"speaker\":\"a\"}},{\"id\":\"b\",\"keys\":{\"speaker\":\"b\"}}]",
+      Json,
+    ) {
+    Ok(value) => value
+    Err(_) => abort("test records should parse")
+  }
+  let spec = match
+    @spec.parse_v2_spec(
+      "{\"schema_version\":2,\"kind\":\"holdout\",\"ratio_tolerance_bp\":0,\"partitions\":[{\"name\":\"train\",\"weight\":1500000000},{\"name\":\"test\",\"weight\":1400000000}],\"rules\":[{\"id\":\"speaker\",\"type\":\"exact_key\",\"key\":\"speaker\"}]}",
+    ) {
+    Ok(value) => value
+    Err(_) => abort("test spec should parse")
+  }
+  let plan = match @plan.plan_split_with_rules(records, spec) {
+    Ok(value) => value
+    Err(_) => abort("large-weight plan should succeed")
+  }
+  let summary = rule_summary_json(plan)
+  assert_true(summary.contains("\"target_bp\": 5172"))
+  assert_true(summary.contains("\"target_bp\": 4828"))
+}
+
+///|
+test "v2 canonical specs round trip grouped kind-specific split fields" {
+  let kfold = match
+    @spec.parse_v2_spec(
+      "{\"schema_version\":2,\"kind\":\"kfold\",\"seed\":7,\"k\":3,\"rules\":[{\"id\":\"speaker\",\"type\":\"exact_key\",\"key\":\"speaker\"}]}",
+    ) {
+    Ok(value) => value
+    Err(_) => abort("kfold spec should parse")
+  }
+  let kfold_json = v2_spec_json(kfold)
+  assert_true(kfold_json.contains("\"kind\": \"kfold\""))
+  assert_true(kfold_json.contains("\"k\": 3"))
+  assert_false(kfold_json.contains("\"partitions\""))
+  match @spec.parse_v2_spec(kfold_json) {
+    Ok(round_trip) => {
+      assert_true(round_trip.kind() is GroupedKFold)
+      assert_eq(round_trip.k(), 3)
+    }
+    Err(_) => assert_true(false)
+  }
+
+  let holdout = match
+    @spec.parse_v2_spec(
+      "{\"schema_version\":2,\"kind\":\"holdout\",\"partitions\":[{\"name\":\"train\",\"weight\":8},{\"name\":\"test\",\"weight\":2}],\"rules\":[{\"id\":\"speaker\",\"type\":\"exact_key\",\"key\":\"speaker\"}]}",
+    ) {
+    Ok(value) => value
+    Err(_) => abort("holdout spec should parse")
+  }
+  let holdout_json = v2_spec_json(holdout)
+  assert_true(holdout_json.contains("\"partitions\""))
+  assert_false(holdout_json.contains("\"k\""))
+  match @spec.parse_v2_spec(holdout_json) {
+    Ok(round_trip) => {
+      assert_true(round_trip.kind() is GroupedHoldout)
+      assert_eq(round_trip.partitions()[0].name(), "train")
+      assert_eq(round_trip.partitions()[0].weight(), 8)
+      assert_eq(round_trip.partitions()[1].name(), "test")
+      assert_eq(round_trip.partitions()[1].weight(), 2)
+    }
+    Err(_) => assert_true(false)
+  }
+}

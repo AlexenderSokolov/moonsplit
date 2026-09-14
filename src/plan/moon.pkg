@@ -3,6 +3,8 @@ import {
   "AlexenderSokolov/moonsplit/src/spec",
   "AlexenderSokolov/moonsplit/src/group",
   "AlexenderSokolov/moonsplit/src/audit",
+  "AlexenderSokolov/moonsplit/src/rules",
+  "moonbitlang/core/bigint",
 }
 
 import {

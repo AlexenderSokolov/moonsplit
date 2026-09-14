@@ -1,6 +1,9 @@
 import {
   "AlexenderSokolov/moonsplit/src/record",
   "AlexenderSokolov/moonsplit/src/spec",
-  "AlexenderSokolov/moonsplit/src/group",
-  "AlexenderSokolov/moonsplit/src/rules",
+  "moonbitlang/core/bigint",
 }
+
+import {
+  "moonbitlang/core/test",
+} for "test"

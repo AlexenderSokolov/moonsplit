@@ -1,0 +1,7 @@
+{"id":"text_a","keys":{"speaker":"speaker_text_a","source":"source_text_a"},"text":"这是同一段中文文本用于检测","intervals":{"segment":{"start":0,"end":5}}}
+{"id":"text_b","keys":{"speaker":"speaker_text_b","source":"source_text_b"},"text":"这是同一段中文文本用于检测","intervals":{"segment":{"start":10,"end":15}}}
+{"id":"interval_a","keys":{"speaker":"speaker_interval_a","source":"source_interval"},"text":"interval alpha distinct payload","intervals":{"segment":{"start":0,"end":10}}}
+{"id":"interval_b","keys":{"speaker":"speaker_interval_b","source":"source_interval"},"text":"interval bravo distinct payload","intervals":{"segment":{"start":5,"end":14}}}
+{"id":"exact_a","keys":{"speaker":"speaker_exact","source":"source_exact_a"},"text":"exact alpha distinct payload","intervals":{"segment":{"start":20,"end":25}}}
+{"id":"exact_b","keys":{"speaker":"speaker_exact","source":"source_exact_b"},"text":"exact bravo distinct payload","intervals":{"segment":{"start":30,"end":35}}}
+{"id":"independent","keys":{"speaker":"speaker_independent","source":"source_independent"},"text":"independent payload entirely separate","intervals":{"segment":{"start":40,"end":45}}}

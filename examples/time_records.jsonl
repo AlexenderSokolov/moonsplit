@@ -1,0 +1,6 @@
+{"id":"history","keys":{},"text":"independent early history","intervals":{"observation":{"start":0,"end":1000}}}
+{"id":"conflict_history","keys":{},"text":"shared duplicate content","intervals":{"observation":{"start":0,"end":1000}}}
+{"id":"gap","keys":{},"text":"gap-only record","intervals":{"observation":{"start":9001,"end":9500}}}
+{"id":"boundary","keys":{},"text":"boundary record","intervals":{"observation":{"start":9500,"end":10500}}}
+{"id":"validation","keys":{},"text":"shared duplicate content","intervals":{"observation":{"start":12000,"end":13000}}}
+{"id":"future","keys":{},"text":"future record","intervals":{"observation":{"start":21000,"end":22000}}}

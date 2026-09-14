@@ -6,6 +6,7 @@ import {
   "AlexenderSokolov/moonsplit/src/plan",
   "AlexenderSokolov/moonsplit/src/record",
   "AlexenderSokolov/moonsplit/src/spec",
+  "AlexenderSokolov/moonsplit/src/temporal",
 }
 
 // Values
@@ -21,7 +22,45 @@ pub fn plan_json(@plan.SplitPlan) -> String
 
 pub fn report_markdown(@plan.SplitPlan) -> String
 
+pub fn rule_assignments_jsonl(@plan.RuleSplitPlan) -> String
+
+pub fn rule_audit_json(@audit.RuleAuditReport, @plan.RuleSplitPlan) -> String
+
+pub fn rule_audit_report_json(@audit.RuleAuditReport, Int, Int) -> String
+
+pub fn rule_components_jsonl(@plan.RuleSplitPlan) -> String
+
+pub fn rule_evidence_jsonl(@plan.RuleSplitPlan) -> String
+
+pub fn rule_folds_jsonl(@plan.RuleSplitPlan) -> Result[String, Array[@record.Issue]]
+
+pub fn rule_plan_json(@plan.RuleSplitPlan) -> String
+
+pub fn rule_report_markdown(@plan.RuleSplitPlan) -> String
+
+pub fn rule_summary_json(@plan.RuleSplitPlan) -> String
+
 pub fn summary_json(@plan.SplitPlan) -> String
+
+pub fn temporal_audit_json(@temporal.TemporalAuditReport, @temporal.TemporalPlan) -> String
+
+pub fn temporal_audit_report_json(@temporal.TemporalAuditReport, Int, Int) -> String
+
+pub fn temporal_components_jsonl(@temporal.TemporalPlan) -> String
+
+pub fn temporal_exclusions_jsonl(@temporal.TemporalPlan) -> String
+
+pub fn temporal_plan_json(@temporal.TemporalPlan, @spec.V2Spec) -> String
+
+pub fn temporal_report_markdown(@temporal.TemporalPlan) -> String
+
+pub fn temporal_roles_jsonl(@temporal.TemporalPlan) -> String
+
+pub fn temporal_summary_json(@temporal.TemporalPlan) -> String
+
+pub fn temporal_witnesses_jsonl(@temporal.TemporalPlan) -> String
+
+pub fn v2_spec_json(@spec.V2Spec) -> String
 
 // Errors
 

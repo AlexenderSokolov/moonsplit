@@ -133,15 +133,15 @@ pub fn SplitPlan::summaries(self : SplitPlan) -> Array[PartitionSummary] {
       None => ()
     }
   }
-  let mut weight_sum = 0
+  let mut weight_sum = v1_bigint_zero()
   for partition in partitions {
-    weight_sum += partition.weight()
+    weight_sum = weight_sum + @bigint.BigInt::from_int(partition.weight())
   }
   let total = self.assignments.length()
   let summaries : Array[PartitionSummary] = []
   for partition in partitions {
     let record_count = counts[partition.name()]
-    let target_bp = basis_points(partition.weight(), weight_sum)
+    let target_bp = weighted_basis_points(partition.weight(), weight_sum)
     let actual_bp = if total == 0 {
       0
     } else {
@@ -184,6 +184,10 @@ pub fn plan_split(
   records : Array[@record.Record],
   spec : @spec.SplitSpec,
 ) -> Result[SplitPlan, Array[@record.Issue]] {
+  match @spec.validate_split_spec(spec) {
+    Ok(_) => ()
+    Err(issues) => return Err(issues)
+  }
   let components = match
     @group.build_components(records, spec.isolation_keys()) {
     Err(issues) => return Err(issues)
@@ -197,9 +201,9 @@ pub fn plan_split(
       ),
     ])
   }
-  let mut weight_sum = 0
+  let mut weight_sum = v1_bigint_zero()
   for partition in spec.partitions() {
-    weight_sum = weight_sum + partition.weight()
+    weight_sum = weight_sum + @bigint.BigInt::from_int(partition.weight())
   }
   let labels : Map[String, String] = Map([])
   let label_totals : Map[String, Int] = Map([])
@@ -248,7 +252,7 @@ pub fn plan_split(
     let size = component.member_ids().length()
     let component_labels = component_label_counts(component, labels)
     let mut chosen = -1
-    let mut best_delta = 0
+    let mut best_delta : @bigint.BigInt? = None
     if component_index < partition_count {
       chosen = component_index
     } else {
@@ -258,12 +262,13 @@ pub fn plan_split(
         let partition = spec.partitions()[partition_index]
         let current_size = sizes[partition_index]
         let current_label_count = label_counts[partition_index]
-        let mut delta = 0
-        let size_before = record_count * partition.weight() -
-          weight_sum * current_size
-        let size_after = record_count * partition.weight() -
-          weight_sum * (current_size + size)
-        delta = delta + size_after * size_after - size_before * size_before
+        let mut delta = size_error(
+            record_count,
+            weight_sum,
+            partition.weight(),
+            current_size + size,
+          ) -
+          size_error(record_count, weight_sum, partition.weight(), current_size)
         if spec.balance_labels() {
           for label in component_labels.keys() {
             let count = component_labels[label]
@@ -275,15 +280,26 @@ pub fn plan_split(
               Some(value) => value
               None => 0
             }
-            let before = label_total * partition.weight() - weight_sum * current
-            let after = label_total * partition.weight() -
-              weight_sum * (current + count)
-            delta = delta + after * after - before * before
+            delta = delta +
+              size_error(
+                label_total,
+                weight_sum,
+                partition.weight(),
+                current + count,
+              ) -
+              size_error(label_total, weight_sum, partition.weight(), current)
           }
         }
-        if chosen == -1 || delta < best_delta {
-          chosen = partition_index
-          best_delta = delta
+        match best_delta {
+          None => {
+            chosen = partition_index
+            best_delta = Some(delta)
+          }
+          Some(best) =>
+            if delta < best {
+              chosen = partition_index
+              best_delta = Some(delta)
+            }
         }
       }
     }
@@ -306,7 +322,7 @@ pub fn plan_split(
       }
     }
   }
-  assignments.sort_by((left, right) => compare_strings(left.id(), right.id()))
+  assignments.sort_by((left, right) => left.id().lexical_compare(right.id()))
   let warnings = plan_warnings(records, spec, components, assignments)
   let plan = SplitPlan::new(
     spec.kind(),
@@ -344,7 +360,7 @@ pub fn SplitPlan::new(
 ) -> SplitPlan {
   let sorted_assignments = assignments.copy()
   sorted_assignments.sort_by((left, right) => {
-    compare_strings(left.id(), right.id())
+    left.id().lexical_compare(right.id())
   })
   let partition_label_counts : Array[Map[String, Int]] = []
   let partition_unlabeled_counts : Array[Int] = []
@@ -389,7 +405,7 @@ fn order_components(
       } else if left_order > right_order {
         1
       } else {
-        compare_strings(left.id(), right.id())
+        left.id().lexical_compare(right.id())
       }
     }
   })
@@ -433,22 +449,26 @@ fn plan_warnings(
 ) -> Array[String] {
   let warnings : Array[String] = []
   let mut total = 0
-  let mut weight_sum = 0
+  let mut weight_sum = v1_bigint_zero()
   let mut max_weight = 0
   for _record in records {
     total = total + 1
   }
   for partition in spec.partitions() {
-    weight_sum = weight_sum + partition.weight()
+    weight_sum = weight_sum + @bigint.BigInt::from_int(partition.weight())
     if partition.weight() > max_weight {
       max_weight = partition.weight()
     }
   }
-  if total > 0 && weight_sum > 0 {
-    let ideal = (total * max_weight + weight_sum - 1) / weight_sum
+  if total > 0 && weight_sum > v1_bigint_zero() {
+    let ideal_numerator = @bigint.BigInt::from_int(total) *
+      @bigint.BigInt::from_int(max_weight) +
+      weight_sum -
+      @bigint.BigInt::from_int(1)
+    let ideal = ideal_numerator / weight_sum
     for component in components.groups() {
       let size = component.member_ids().length()
-      if size > ideal {
+      if @bigint.BigInt::from_int(size) > ideal {
         warnings.push(
           "component \{component.id()} has \{size} records, exceeding the largest weighted target \{ideal}",
         )
@@ -465,7 +485,7 @@ fn plan_warnings(
       None => ()
     }
   }
-  if total > 0 && weight_sum > 0 {
+  if total > 0 && weight_sum > v1_bigint_zero() {
     for partition in spec.partitions() {
       let count = counts[partition.name()]
       if ratio_exceeds_tolerance(
@@ -476,7 +496,7 @@ fn plan_warnings(
           spec.ratio_tolerance_bp(),
         ) {
         let actual_bp = basis_points(count, total)
-        let target_bp = basis_points(partition.weight(), weight_sum)
+        let target_bp = weighted_basis_points(partition.weight(), weight_sum)
         let raw_deviation = actual_bp - target_bp
         let deviation_bp = if raw_deviation < 0 {
           -raw_deviation
@@ -498,16 +518,38 @@ fn ratio_exceeds_tolerance(
   count : Int,
   total : Int,
   weight : Int,
-  weight_sum : Int,
+  weight_sum : @bigint.BigInt,
   tolerance_bp : Int,
 ) -> Bool {
-  let difference = count * weight_sum - total * weight
-  let absolute_difference = if difference < 0 {
+  let difference = @bigint.BigInt::from_int(count) * weight_sum -
+    @bigint.BigInt::from_int(total) * @bigint.BigInt::from_int(weight)
+  let absolute_difference = if difference < v1_bigint_zero() {
     -difference
   } else {
     difference
   }
-  absolute_difference * 10000 > tolerance_bp * total * weight_sum
+  absolute_difference * @bigint.BigInt::from_int(10000) >
+  @bigint.BigInt::from_int(tolerance_bp) *
+  @bigint.BigInt::from_int(total) *
+  weight_sum
+}
+
+///|
+/// Squared allocation term, converting every multiplier before arithmetic.
+fn size_error(
+  total : Int,
+  weight_sum : @bigint.BigInt,
+  weight : Int,
+  count : Int,
+) -> @bigint.BigInt {
+  let difference = weight_sum * @bigint.BigInt::from_int(count) -
+    @bigint.BigInt::from_int(weight) * @bigint.BigInt::from_int(total)
+  difference * difference
+}
+
+///|
+fn v1_bigint_zero() -> @bigint.BigInt {
+  @bigint.BigInt::from_int(0)
 }
 
 ///|
@@ -575,22 +617,30 @@ fn copy_int_map(source : Map[String, Int]) -> Map[String, Int] {
 }
 
 ///|
-fn compare_strings(left : String, right : String) -> Int {
-  if left < right {
-    -1
-  } else if left > right {
-    1
-  } else {
-    0
-  }
-}
-
-///|
 /// Convert a non-negative ratio to basis points using half-up rounding.
 fn basis_points(numerator : Int, denominator : Int) -> Int {
   if denominator <= 0 {
     0
   } else {
-    (numerator * 10000 + denominator / 2) / denominator
+    ((
+      @bigint.BigInt::from_int(numerator) * @bigint.BigInt::from_int(10000) +
+      @bigint.BigInt::from_int(denominator) / @bigint.BigInt::from_int(2)
+    ) /
+    @bigint.BigInt::from_int(denominator)).to_int()
+  }
+}
+
+///|
+/// Convert a positive partition weight over an arbitrary-precision total to
+/// basis points using half-up rounding.
+fn weighted_basis_points(numerator : Int, denominator : @bigint.BigInt) -> Int {
+  if denominator <= v1_bigint_zero() {
+    0
+  } else {
+    ((
+      @bigint.BigInt::from_int(numerator) * @bigint.BigInt::from_int(10000) +
+      denominator / @bigint.BigInt::from_int(2)
+    ) /
+    denominator).to_int()
   }
 }

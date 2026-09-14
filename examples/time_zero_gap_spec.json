@@ -1,0 +1,19 @@
+{
+  "schema_version": 2,
+  "kind": "time_forward",
+  "rules": [
+    {"id": "speaker", "type": "exact_key", "key": "speaker"},
+    {"id": "duplicate", "type": "text_jaccard", "q": 3, "threshold_bp": 8000},
+    {"id": "window", "type": "interval_overlap", "source_key": "source", "interval": "segment"}
+  ],
+  "time": {
+    "interval": "observation",
+    "unit": "ms",
+    "epoch": "unix",
+    "gap": 0,
+    "validation_windows": [
+      {"id": "fold_0", "start": 10, "end": 20},
+      {"id": "fold_1", "start": 30, "end": 40}
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/rules"
+
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn build_rule_components(Array[@record.V2Record], Array[@spec.LeakageRule]) -> Result[RuleComponents, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub struct RuleComponent {
+  // private fields
+} derive(@debug.Debug)
+pub fn RuleComponent::id(Self) -> String
+pub fn RuleComponent::member_ids(Self) -> Array[String]
+pub fn RuleComponent::new(String, Array[String], Array[RuleWitness]) -> Self
+pub fn RuleComponent::size(Self) -> Int
+pub fn RuleComponent::witness_edges(Self) -> Array[RuleWitness]
+
+pub struct RuleComponents {
+  // private fields
+} derive(@debug.Debug)
+pub fn RuleComponents::count(Self) -> Int
+pub fn RuleComponents::groups(Self) -> Array[RuleComponent]
+pub fn RuleComponents::new(Array[RuleComponent], Int, Int) -> Self
+pub fn RuleComponents::text_candidate_count(Self) -> Int
+pub fn RuleComponents::text_comparison_count(Self) -> Int
+pub fn RuleComponents::total_records(Self) -> Int
+
+pub struct RuleWitness {
+  // private fields
+} derive(@debug.Debug)
+pub fn RuleWitness::detail(Self) -> String
+pub fn RuleWitness::left_id(Self) -> String
+pub fn RuleWitness::new(String, String, String, String, String) -> Self
+pub fn RuleWitness::right_id(Self) -> String
+pub fn RuleWitness::rule_id(Self) -> String
+pub fn RuleWitness::rule_type(Self) -> String
+
+// Type aliases
+
+// Traits

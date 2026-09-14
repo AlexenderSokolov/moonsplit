@@ -1,0 +1,7 @@
+{"id":"text_a","partition":"train"}
+{"id":"text_b","partition":"train"}
+{"id":"interval_a","partition":"train"}
+{"id":"interval_b","partition":"test"}
+{"id":"exact_a","partition":"train"}
+{"id":"exact_b","partition":"train"}
+{"id":"independent","partition":"train"}

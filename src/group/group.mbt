@@ -61,11 +61,9 @@ fn compare_edges(left : RelationEdge, right : RelationEdge) -> Int {
     (left.right_id(), right.right_id()),
   ]
   for pair in comparisons {
-    if pair.0 < pair.1 {
-      return -1
-    }
-    if pair.0 > pair.1 {
-      return 1
+    let comparison = pair.0.lexical_compare(pair.1)
+    if comparison != 0 {
+      return comparison
     }
   }
   0
@@ -205,11 +203,12 @@ pub fn build_components(
     return Err(issues)
   }
   let parent : Array[Int] = []
+  let sizes : Array[Int] = []
   for i = 0; i < records.length(); i = i + 1 {
     parent.push(i)
+    sizes.push(1)
   }
   let witness_edges : Array[RelationEdge] = []
-  let root_edges : Map[Int, Array[RelationEdge]] = Map([])
   let buckets : Map[(String, String), Int] = Map([])
   for record in sorted_records(records) {
     for key_name in isolation_keys {
@@ -219,42 +218,26 @@ pub fn build_components(
         Some(other) => {
           let right_index = other
           let right_record = records[right_index]
-          let left_root = find(parent, ids[record.id()])
-          let right_root = find(parent, ids[right_record.id()])
-          if left_root != right_root {
-            union(parent, ids[record.id()], ids[right_record.id()])
+          if union(parent, sizes, ids[record.id()], ids[right_record.id()]) {
             let edge = RelationEdge::new(
               record.id(),
               right_record.id(),
               key_name,
               key_value,
             )
-            let root = find(parent, ids[record.id()])
-            let absorbed_root = if root == left_root {
-              right_root
-            } else {
-              left_root
-            }
-            match root_edges.get(absorbed_root) {
-              Some(old_edges) =>
-                match root_edges.get(root) {
-                  Some(edges) =>
-                    for old_edge in old_edges {
-                      edges.push(old_edge)
-                    }
-                  None => root_edges[root] = old_edges
-                }
-              None => ()
-            }
-            match root_edges.get(root) {
-              Some(edges) => edges.push(edge)
-              None => root_edges[root] = [edge]
-            }
             witness_edges.push(edge)
           }
         }
         None => buckets[bucket_key] = ids[record.id()]
       }
+    }
+  }
+  let edges_by_root : Map[Int, Array[RelationEdge]] = Map([])
+  for edge in witness_edges {
+    let root = find(parent, ids[edge.left_id()])
+    match edges_by_root.get(root) {
+      Some(edges) => edges.push(edge)
+      None => edges_by_root[root] = [edge]
     }
   }
   let roots : Map[Int, Component] = Map([])
@@ -264,7 +247,7 @@ pub fn build_components(
       Some(group) => group.add_member(record.id())
       None => {
         let members : Array[String] = [record.id()]
-        let edges = match root_edges.get(root) {
+        let edges = match edges_by_root.get(root) {
           Some(value) => value
           None => []
         }
@@ -276,20 +259,12 @@ pub fn build_components(
   let groups : Array[Component] = []
   for group in roots.values() {
     let member_ids = group.member_ids()
-    member_ids.sort()
+    member_ids.sort_by((left, right) => left.lexical_compare(right))
     groups.push(
       Component::new(member_ids[0], member_ids, group.witness_edges()),
     )
   }
-  groups.sort_by((a, b) => {
-    if a.id() < b.id() {
-      -1
-    } else if a.id() > b.id() {
-      1
-    } else {
-      0
-    }
-  })
+  groups.sort_by((a, b) => a.id().lexical_compare(b.id()))
   for index = 0; index < groups.length(); index = index + 1 {
     let group = groups[index]
     let edges = group.witness_edges()
@@ -305,38 +280,38 @@ pub fn build_components(
 ///|
 fn sorted_records(records : Array[@record.Record]) -> Array[@record.Record] {
   let sorted = records.copy()
-  sorted.sort_by((left, right) => {
-    if left.id() < right.id() {
-      -1
-    } else if left.id() > right.id() {
-      1
-    } else {
-      0
-    }
-  })
+  sorted.sort_by((left, right) => left.id().lexical_compare(right.id()))
   sorted
 }
 
 ///|
 fn find(parent : Array[Int], x : Int) -> Int {
-  if parent[x] == x {
-    x
-  } else {
-    let root = find(parent, parent[x])
-    parent[x] = root
-    root
+  let mut root = x
+  while parent[root] != root {
+    root = parent[root]
   }
+  let mut node = x
+  while parent[node] != node {
+    let next = parent[node]
+    parent[node] = root
+    node = next
+  }
+  root
 }
 
 ///|
-fn union(parent : Array[Int], a : Int, b : Int) -> Unit {
+fn union(parent : Array[Int], sizes : Array[Int], a : Int, b : Int) -> Bool {
   let ra = find(parent, a)
   let rb = find(parent, b)
-  if ra != rb {
-    if ra < rb {
-      parent[rb] = ra
-    } else {
-      parent[ra] = rb
-    }
+  if ra == rb {
+    return false
   }
+  if sizes[ra] > sizes[rb] || (sizes[ra] == sizes[rb] && ra < rb) {
+    parent[rb] = ra
+    sizes[ra] = sizes[ra] + sizes[rb]
+  } else {
+    parent[ra] = rb
+    sizes[rb] = sizes[rb] + sizes[ra]
+  }
+  true
 }

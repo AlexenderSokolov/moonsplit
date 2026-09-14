@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "kind": "holdout",
+  "seed": 0,
+  "balance_labels": true,
+  "ratio_tolerance_bp": 10000,
+  "partitions": [
+    {"name": "left", "weight": 1},
+    {"name": "right", "weight": 1}
+  ],
+  "rules": [
+    {"id": "group", "type": "exact_key", "key": "group"}
+  ]
+}

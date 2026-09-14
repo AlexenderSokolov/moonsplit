@@ -1,0 +1,6 @@
+{"fold_id":"fold_0","id":"history","role":"train","reason":"historical"}
+{"fold_id":"fold_0","id":"conflict_history","role":"train","reason":"historical"}
+{"fold_id":"fold_0","id":"gap","role":"excluded","reason":"gap"}
+{"fold_id":"fold_0","id":"boundary","role":"excluded","reason":"boundary_overlap"}
+{"fold_id":"fold_0","id":"validation","role":"validation","reason":"validation_window"}
+{"fold_id":"fold_0","id":"future","role":"excluded","reason":"future"}

@@ -4,6 +4,7 @@ package "AlexenderSokolov/moonsplit/src/plan"
 import {
   "AlexenderSokolov/moonsplit/src/group",
   "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/rules",
   "AlexenderSokolov/moonsplit/src/spec",
   "moonbitlang/core/debug",
 }
@@ -12,6 +13,8 @@ import {
 pub fn fold_members(SplitPlan, String, FoldSide) -> Result[Array[String], Array[@record.Issue]]
 
 pub fn plan_split(Array[@record.Record], @spec.SplitSpec) -> Result[SplitPlan, Array[@record.Issue]]
+
+pub fn plan_split_with_rules(Array[@record.V2Record], @spec.V2Spec) -> Result[RuleSplitPlan, Array[@record.Issue]]
 
 // Errors
 
@@ -32,6 +35,25 @@ pub fn PartitionSummary::record_count(Self) -> Int
 pub fn PartitionSummary::target_bp(Self) -> Int
 pub fn PartitionSummary::unlabeled_count(Self) -> Int
 pub fn PartitionSummary::weight(Self) -> Int
+
+pub struct RuleSplitPlan {
+  // private fields
+} derive(@debug.Debug)
+pub fn RuleSplitPlan::algorithm(Self) -> String
+pub fn RuleSplitPlan::assignments(Self) -> Array[@record.Assignment]
+pub fn RuleSplitPlan::balance_labels(Self) -> Bool
+pub fn RuleSplitPlan::components(Self) -> @rules.RuleComponents
+pub fn RuleSplitPlan::initial_objective(Self) -> String
+pub fn RuleSplitPlan::k(Self) -> Int
+pub fn RuleSplitPlan::kind(Self) -> @spec.V2Kind
+pub fn RuleSplitPlan::objective(Self) -> String
+pub fn RuleSplitPlan::optimization_rounds(Self) -> Int
+pub fn RuleSplitPlan::partition_counts(Self) -> Map[String, Int]
+pub fn RuleSplitPlan::partition_weights(Self) -> Array[@spec.Partition]
+pub fn RuleSplitPlan::ratio_tolerance_bp(Self) -> Int
+pub fn RuleSplitPlan::rules(Self) -> Array[@spec.LeakageRule]
+pub fn RuleSplitPlan::seed(Self) -> UInt
+pub fn RuleSplitPlan::warnings(Self) -> Array[String]
 
 pub struct SplitPlan {
   // private fields

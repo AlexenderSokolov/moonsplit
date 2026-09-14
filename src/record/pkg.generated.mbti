@@ -10,6 +10,8 @@ pub fn parse_assignments(String) -> Result[Array[Assignment], Array[Issue]]
 
 pub fn parse_records(String, InputFormat) -> Result[Array[Record], Array[Issue]]
 
+pub fn parse_v2_records(String, InputFormat) -> Result[Array[V2Record], Array[Issue]]
+
 // Errors
 
 // Types and methods
@@ -24,6 +26,13 @@ pub(all) enum InputFormat {
   Json
   Jsonl
 } derive(Eq, @debug.Debug)
+
+pub struct Interval {
+  // private fields
+} derive(@debug.Debug)
+pub fn Interval::end(Self) -> Int64
+pub fn Interval::new(Int64, Int64) -> Self
+pub fn Interval::start(Self) -> Int64
 
 pub struct Issue {
   // private fields
@@ -50,6 +59,19 @@ pub fn Record::keys(Self) -> Map[String, String]
 pub fn Record::label(Self) -> String?
 pub fn Record::new(String, String?, Map[String, String]) -> Self
 pub fn Record::snapshot(Self) -> Self
+
+pub struct V2Record {
+  // private fields
+} derive(@debug.Debug)
+pub fn V2Record::id(Self) -> String
+pub fn V2Record::interval(Self, String) -> Interval?
+pub fn V2Record::intervals(Self) -> Map[String, Interval]
+pub fn V2Record::key(Self, String) -> String?
+pub fn V2Record::keys(Self) -> Map[String, String]
+pub fn V2Record::label(Self) -> String?
+pub fn V2Record::new(String, String?, Map[String, String], String?, Map[String, Interval]) -> Self
+pub fn V2Record::snapshot(Self) -> Self
+pub fn V2Record::text(Self) -> String?
 
 // Type aliases
 

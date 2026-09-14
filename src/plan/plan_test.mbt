@@ -164,6 +164,45 @@ test "partition summaries use half-up basis points and return an isolated array"
 }
 
 ///|
+test "large v1 weight totals retain exact basis-point targets and warnings" {
+  let input = "{\"schema_version\":1,\"kind\":\"holdout\",\"isolation_keys\":[\"speaker_id\"],\"ratio_tolerance_bp\":0,\"partitions\":[{\"name\":\"train\",\"weight\":1500000000},{\"name\":\"test\",\"weight\":1400000000}]}"
+  let spec = match @spec.parse_spec(input) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      @spec.SplitSpec::new(Holdout, [], 0U, false, 0, [], 0)
+    }
+  }
+  let plan = match plan_split(equal_components(4), spec) {
+    Ok(value) => value
+    Err(issues) => {
+      assert_true(false)
+      ignore(issues)
+      SplitPlan::new(
+        Holdout,
+        [],
+        [],
+        @group.Components::new([]),
+        0U,
+        false,
+        0,
+        [],
+        0,
+        [],
+      )
+    }
+  }
+  let summaries = plan.summaries()
+  assert_eq(summaries[0].target_bp(), 5172)
+  assert_eq(summaries[1].target_bp(), 4828)
+  let warnings = plan.warnings()
+  assert_eq(warnings.length(), 2)
+  assert_true(warnings[0].contains("target 5172bp"))
+  assert_true(warnings[1].contains("target 4828bp"))
+}
+
+///|
 test "a large component is kept and warned" {
   let records : Array[@record.Record] = []
   same_component(records, 0, 1, 0)
@@ -484,5 +523,43 @@ test "planning is stable when input records are reversed" {
       first_plan.assignments()[index].partition(),
       second_plan.assignments()[index].partition(),
     )
+  }
+}
+
+///|
+test "plan_split rejects a constructor-built v1 spec before grouping" {
+  let invalid = @spec.SplitSpec::new(
+    Holdout,
+    [],
+    42U,
+    false,
+    500,
+    [@spec.Partition::new("train", 1), @spec.Partition::new("test", 1)],
+    0,
+  )
+  match plan_split(equal_components(2), invalid) {
+    Ok(_) => assert_true(false)
+    Err(issues) => assert_eq(issues[0].code(), "invalid_isolation_keys")
+  }
+}
+
+///|
+test "plan_split retains the legacy kfold constructor" {
+  let legacy = @spec.SplitSpec::new(
+    KFold,
+    ["speaker_id"],
+    42U,
+    false,
+    500,
+    [],
+    2,
+  )
+  match plan_split(equal_components(4), legacy) {
+    Err(_) => assert_true(false)
+    Ok(plan) => {
+      assert_true(plan.kind() is KFold)
+      assert_eq(plan.partition_weights().length(), 2)
+      assert_eq(plan.assignments().length(), 4)
+    }
   }
 }

@@ -9,9 +9,30 @@ import {
 // Values
 pub fn parse_spec(String) -> Result[SplitSpec, Array[@record.Issue]]
 
+pub fn parse_v2_spec(String) -> Result[V2Spec, Array[@record.Issue]]
+
+pub fn validate_split_spec(SplitSpec) -> Result[Unit, Array[@record.Issue]]
+
 // Errors
 
 // Types and methods
+pub struct LeakageRule {
+  // private fields
+} derive(@debug.Debug)
+pub fn LeakageRule::id(Self) -> String
+pub fn LeakageRule::interval(Self) -> String?
+pub fn LeakageRule::key(Self) -> String?
+pub fn LeakageRule::kind(Self) -> LeakageRuleKind
+pub fn LeakageRule::q(Self) -> Int
+pub fn LeakageRule::source_key(Self) -> String?
+pub fn LeakageRule::threshold_bp(Self) -> Int
+
+pub(all) enum LeakageRuleKind {
+  ExactKey
+  TextJaccard
+  IntervalOverlap
+} derive(Eq, @debug.Debug)
+
 pub struct Partition {
   // private fields
 } derive(@debug.Debug)
@@ -37,6 +58,43 @@ pub fn SplitSpec::partitions(Self) -> Array[Partition]
 pub fn SplitSpec::ratio_tolerance_bp(Self) -> Int
 pub fn SplitSpec::seed(Self) -> UInt
 pub fn SplitSpec::to_json(Self) -> String
+
+pub struct TimeConfig {
+  // private fields
+} derive(@debug.Debug)
+pub fn TimeConfig::epoch(Self) -> String
+pub fn TimeConfig::gap(Self) -> Int64
+pub fn TimeConfig::interval(Self) -> String
+pub fn TimeConfig::new(String, String, String, Int64, Array[ValidationWindow]) -> Self
+pub fn TimeConfig::unit(Self) -> String
+pub fn TimeConfig::validation_windows(Self) -> Array[ValidationWindow]
+
+pub(all) enum V2Kind {
+  GroupedHoldout
+  GroupedKFold
+  TimeForward
+} derive(Eq, @debug.Debug)
+
+pub struct V2Spec {
+  // private fields
+} derive(@debug.Debug)
+pub fn V2Spec::algorithm(Self) -> String
+pub fn V2Spec::balance_labels(Self) -> Bool
+pub fn V2Spec::k(Self) -> Int
+pub fn V2Spec::kind(Self) -> V2Kind
+pub fn V2Spec::partitions(Self) -> Array[Partition]
+pub fn V2Spec::ratio_tolerance_bp(Self) -> Int
+pub fn V2Spec::rules(Self) -> Array[LeakageRule]
+pub fn V2Spec::seed(Self) -> UInt
+pub fn V2Spec::time(Self) -> TimeConfig?
+
+pub struct ValidationWindow {
+  // private fields
+} derive(@debug.Debug)
+pub fn ValidationWindow::end(Self) -> Int64
+pub fn ValidationWindow::id(Self) -> String
+pub fn ValidationWindow::new(String, Int64, Int64) -> Self
+pub fn ValidationWindow::start(Self) -> Int64
 
 // Type aliases
 

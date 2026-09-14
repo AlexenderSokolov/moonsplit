@@ -3,12 +3,15 @@ package "AlexenderSokolov/moonsplit/src/audit"
 
 import {
   "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/rules",
   "AlexenderSokolov/moonsplit/src/spec",
   "moonbitlang/core/debug",
 }
 
 // Values
 pub fn audit_split(Array[@record.Record], @spec.SplitSpec, Array[@record.Assignment]) -> Result[AuditReport, Array[@record.Issue]]
+
+pub fn audit_split_with_rules(Array[@record.V2Record], @spec.V2Spec, Array[@record.Assignment]) -> Result[RuleAuditReport, Array[@record.Issue]]
 
 // Errors
 
@@ -20,6 +23,14 @@ pub fn AuditReport::is_valid(Self) -> Bool
 pub fn AuditReport::issues(Self) -> Array[@record.Issue]
 pub fn AuditReport::new(Bool, Array[@record.Issue], Map[String, Int]) -> Self
 pub fn AuditReport::partition_counts(Self) -> Map[String, Int]
+
+pub struct RuleAuditReport {
+  // private fields
+} derive(@debug.Debug)
+pub fn RuleAuditReport::components(Self) -> @rules.RuleComponents
+pub fn RuleAuditReport::is_valid(Self) -> Bool
+pub fn RuleAuditReport::issues(Self) -> Array[@record.Issue]
+pub fn RuleAuditReport::partition_counts(Self) -> Map[String, Int]
 
 // Type aliases
 

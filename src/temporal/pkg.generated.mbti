@@ -1,0 +1,64 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "AlexenderSokolov/moonsplit/src/temporal"
+
+import {
+  "AlexenderSokolov/moonsplit/src/record",
+  "AlexenderSokolov/moonsplit/src/rules",
+  "AlexenderSokolov/moonsplit/src/spec",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn audit_temporal(Array[@record.V2Record], @spec.V2Spec, Array[TemporalRole]) -> Result[TemporalAuditReport, Array[@record.Issue]]
+
+pub fn parse_temporal_roles(String) -> Result[Array[TemporalRole], Array[@record.Issue]]
+
+pub fn plan_temporal(Array[@record.V2Record], @spec.V2Spec) -> Result[TemporalPlan, Array[@record.Issue]]
+
+// Errors
+
+// Types and methods
+pub struct TemporalAuditReport {
+  // private fields
+} derive(@debug.Debug)
+pub fn TemporalAuditReport::is_valid(Self) -> Bool
+pub fn TemporalAuditReport::issues(Self) -> Array[@record.Issue]
+pub fn TemporalAuditReport::train_counts(Self) -> Map[String, Int]
+pub fn TemporalAuditReport::validation_counts(Self) -> Map[String, Int]
+
+pub struct TemporalPlan {
+  // private fields
+} derive(@debug.Debug)
+pub fn TemporalPlan::components(Self) -> @rules.RuleComponents
+pub fn TemporalPlan::roles(Self) -> Array[TemporalRole]
+pub fn TemporalPlan::time(Self) -> @spec.TimeConfig
+
+pub(all) enum TemporalReason {
+  ValidationWindow
+  ComponentConflict
+  Historical
+  Gap
+  Future
+  BoundaryOverlap
+} derive(Eq, @debug.Debug)
+pub fn TemporalReason::as_string(Self) -> String
+
+pub struct TemporalRole {
+  // private fields
+} derive(@debug.Debug)
+pub fn TemporalRole::fold_id(Self) -> String
+pub fn TemporalRole::id(Self) -> String
+pub fn TemporalRole::new(String, String, TemporalRoleKind, TemporalReason) -> Self
+pub fn TemporalRole::reason(Self) -> TemporalReason
+pub fn TemporalRole::role(Self) -> TemporalRoleKind
+
+pub(all) enum TemporalRoleKind {
+  Train
+  Validation
+  Excluded
+} derive(Eq, @debug.Debug)
+pub fn TemporalRoleKind::as_string(Self) -> String
+
+// Type aliases
+
+// Traits

@@ -9,6 +9,7 @@ import {
   "AlexenderSokolov/moonsplit/src/plan",
   "AlexenderSokolov/moonsplit/src/audit",
   "AlexenderSokolov/moonsplit/src/export",
+  "AlexenderSokolov/moonsplit/src/temporal",
 }
 
 pkgtype(kind: "executable")

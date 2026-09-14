@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "kind": "time_forward",
+  "rules": [
+    {"id": "duplicate", "type": "text_jaccard", "q": 3, "threshold_bp": 8000}
+  ],
+  "time": {
+    "interval": "observation",
+    "unit": "ms",
+    "epoch": "unix",
+    "gap": 1000,
+    "validation_windows": [
+      {"id": "fold_0", "start": 10000, "end": 20000}
+    ]
+  }
+}

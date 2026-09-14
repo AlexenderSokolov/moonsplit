@@ -81,6 +81,123 @@ pub fn SplitSpec::partition_names(self : SplitSpec) -> Array[String] {
 }
 
 ///|
+/// Validate the invariants that a parsed v1 split specification guarantees.
+///
+/// `SplitSpec::new` remains available for source compatibility, so execution
+/// entry points call this before grouping or auditing constructor-built values.
+pub fn validate_split_spec(
+  spec : SplitSpec,
+) -> Result[Unit, Array[@record.Issue]] {
+  let issues : Array[@record.Issue] = []
+  let isolation_keys = spec.isolation_keys()
+  if isolation_keys.length() < 1 || isolation_keys.length() > 8 {
+    issues.push(
+      @record.Issue::error(
+        "invalid_isolation_keys", "isolation_keys must contain 1 to 8 unique non-empty names",
+      ),
+    )
+  }
+  let seen_keys : Map[String, Bool] = Map([])
+  for key in isolation_keys {
+    if key == "" || seen_keys.contains(key) {
+      issues.push(
+        @record.Issue::error(
+          "invalid_isolation_keys", "isolation_keys must contain 1 to 8 unique non-empty names",
+        ),
+      )
+    } else {
+      seen_keys[key] = true
+    }
+  }
+  if spec.ratio_tolerance_bp() < 0 || spec.ratio_tolerance_bp() > 10000 {
+    issues.push(
+      @record.Issue::error(
+        "invalid_ratio_tolerance_bp", "ratio_tolerance_bp must be between 0 and 10000",
+      ),
+    )
+  }
+  match spec.kind() {
+    Holdout => validate_holdout_spec(spec, issues)
+    KFold => validate_kfold_spec(spec, issues)
+  }
+  if issues.length() > 0 {
+    Err(issues)
+  } else {
+    Ok(())
+  }
+}
+
+///|
+fn validate_holdout_spec(
+  spec : SplitSpec,
+  issues : Array[@record.Issue],
+) -> Unit {
+  if spec.k() != 0 {
+    issues.push(
+      @record.Issue::error(
+        "invalid_holdout_k", "holdout specifications cannot declare k",
+      ),
+    )
+  }
+  let partitions = spec.partitions()
+  if partitions.length() < 2 || partitions.length() > 8 {
+    issues.push(
+      @record.Issue::error(
+        "invalid_partitions", "holdout must have 2 to 8 partitions",
+      ),
+    )
+  }
+  let names : Map[String, Bool] = Map([])
+  for partition in partitions {
+    let name = partition.name()
+    if name == "" || names.contains(name) {
+      issues.push(
+        @record.Issue::error(
+          "invalid_partition_name", "partition names must be unique and non-empty",
+        ),
+      )
+    } else {
+      names[name] = true
+    }
+    if partition.weight() <= 0 {
+      issues.push(
+        @record.Issue::error(
+          "invalid_partition_weight", "partition weights must be positive",
+        ),
+      )
+    }
+  }
+}
+
+///|
+fn validate_kfold_spec(spec : SplitSpec, issues : Array[@record.Issue]) -> Unit {
+  let k = spec.k()
+  if k < 2 || k > 20 {
+    issues.push(@record.Issue::error("invalid_k", "k must be between 2 and 20"))
+  }
+  let partitions = spec.partitions()
+  if partitions.length() != k {
+    issues.push(
+      @record.Issue::error(
+        "invalid_kfold_partitions", "kfold partitions must match the generated fold names",
+      ),
+    )
+    return
+  }
+  for index = 0; index < partitions.length(); index = index + 1 {
+    let partition = partitions[index]
+    if partition.name() != "fold_\{index}" || partition.weight() != 1 {
+      issues.push(
+        @record.Issue::error(
+          "invalid_kfold_partitions", "kfold partitions must match the generated fold names",
+        ),
+      )
+      return
+    }
+  }
+}
+
+///|
 /// Canonical, human-readable serialization of a split specification.
 pub fn SplitSpec::to_json(self : SplitSpec) -> String {
   let out = StringBuilder()
@@ -335,6 +452,18 @@ pub fn parse_spec(input : String) -> Result[SplitSpec, Array[@record.Issue]] {
             names[name] = true
             let weight = match partition_obj.get("weight") {
               Some(Number(value, ..)) => {
+                let max_safe_json_integer = 9007199254740991.0
+                let max_partition_weight = 2147483647.0
+                if value != value ||
+                  value < 0.0 ||
+                  value > max_safe_json_integer ||
+                  value > max_partition_weight {
+                  return Err([
+                    @record.Issue::error(
+                      "invalid_partition_weight", "partition weight must be a positive safe JSON integer within the Int range",
+                    ),
+                  ])
+                }
                 let integer = value.to_int()
                 if integer.to_double() != value {
                   return Err([
@@ -371,17 +500,6 @@ pub fn parse_spec(input : String) -> Result[SplitSpec, Array[@record.Issue]] {
             return Err([
               @record.Issue::error(
                 "invalid_partitions", "holdout must have 2 to 8 partitions",
-              ),
-            ])
-          }
-          let mut weight_sum = 0
-          for partition in parsed {
-            weight_sum += partition.weight()
-          }
-          if weight_sum > 1000 {
-            return Err([
-              @record.Issue::error(
-                "invalid_partition_weights", "partition weights sum must not exceed 1000",
               ),
             ])
           }

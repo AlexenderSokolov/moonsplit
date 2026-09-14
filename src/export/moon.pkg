@@ -4,4 +4,7 @@ import {
   "AlexenderSokolov/moonsplit/src/plan",
   "AlexenderSokolov/moonsplit/src/group",
   "AlexenderSokolov/moonsplit/src/audit",
+  "AlexenderSokolov/moonsplit/src/rules",
+  "AlexenderSokolov/moonsplit/src/temporal",
+  "moonbitlang/core/bigint",
 }
