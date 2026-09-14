@@ -2,7 +2,7 @@
 
 MoonSplit is a MoonBit CLI and library for leakage-aware dataset splitting and independent audit. Schema v2 combines declared exact keys, Unicode text near-duplicates, and source-scoped interval overlap into indivisible leakage components; it also provides explicit time-forward validation with per-record exclusion reasons.
 
-The release line is `0.3.0`. Its tagged source, CI, registry verification, and reproducible acceptance evidence are recorded in [docs/acceptance.md](docs/acceptance.md). Official hackathon acceptance remains a decision of the organizers.
+The release line is `0.3.0`. [docs/acceptance.md](docs/acceptance.md) separates locally verified evidence from the tag, CI, registry, and clean-install evidence recorded when the release is published. Official hackathon acceptance remains a decision of the organizers.
 
 ## Features
 
