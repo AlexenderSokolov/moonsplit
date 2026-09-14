@@ -1,5 +1,27 @@
 # API
 
+## Installation and package paths
+
+Add the released module with:
+
+```bash
+moon add AlexenderSokolov/moonsplit@0.3.0
+```
+
+MoonSplit exposes its APIs through focused subpackages, rather than the empty module-root package. Import the package that owns the API in your consumer's `moon.pkg`:
+
+```moonbit
+import {
+  "AlexenderSokolov/moonsplit/src/record" @record,
+  "AlexenderSokolov/moonsplit/src/spec" @spec,
+  "AlexenderSokolov/moonsplit/src/plan" @plan,
+  "AlexenderSokolov/moonsplit/src/audit" @audit,
+  "AlexenderSokolov/moonsplit/src/temporal" @temporal,
+}
+```
+
+For example, `@record.Interval::new(100L, 200L).end()` returns `200L`. The public release and clean-install verification are recorded in [acceptance.md](acceptance.md).
+
 ## Records
 
 ```moonbit

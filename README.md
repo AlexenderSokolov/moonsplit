@@ -2,7 +2,7 @@
 
 MoonSplit is a MoonBit CLI and library for leakage-aware dataset splitting and independent audit. Schema v2 combines declared exact keys, Unicode text near-duplicates, and source-scoped interval overlap into indivisible leakage components; it also provides explicit time-forward validation with per-record exclusion reasons.
 
-The release line is `0.3.0`. [docs/acceptance.md](docs/acceptance.md) separates locally verified evidence from the tag, CI, registry, and clean-install evidence recorded when the release is published. Official hackathon acceptance remains a decision of the organizers.
+`v0.3.0` is published at [GitHub](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0) and [Mooncakes](https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit). The [acceptance record](docs/acceptance.md) links the matching tag, CI, registry and clean-install evidence. Official hackathon acceptance remains a decision of the organizers.
 
 ## Features
 
@@ -24,7 +24,13 @@ git clone https://github.com/AlexenderSokolov/moonsplit.git
 cd moonsplit
 ```
 
-After Mooncakes publication, the exact versioned installation command is recorded only after a clean-directory installation test and is linked from [docs/acceptance.md](docs/acceptance.md). Do not infer package availability from the source version alone.
+Install the released library with:
+
+```bash
+moon add AlexenderSokolov/moonsplit@0.3.0
+```
+
+The public APIs are subpackages such as `AlexenderSokolov/moonsplit/src/record` and `AlexenderSokolov/moonsplit/src/plan`; see [docs/api.md](docs/api.md). The release was verified in a new project with this exact dependency, an imported public API, `moon check --deny-warn`, `moon build --deny-warn`, and an installed CLI wrapper. Details and limits of the binary-wrapper verification are in [docs/acceptance.md](docs/acceptance.md).
 
 The `examples/` directory contains ready-made JSON, JSONL, and split specs.
 

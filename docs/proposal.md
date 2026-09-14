@@ -6,7 +6,7 @@ MoonSplit 是一个 MoonBit 数据集划分与独立审计工具。既有 v1 能
 
 ## 本期新增
 
-本期实现引入 schema v2 和三类泄漏模型：`exact_key`、Unicode 字符 q-gram Jaccard 文本近重复、以及同来源半开区间重叠；新增显式时间窗口的前向验证，逐折输出 `train`、`validation` 和具名 `excluded` 原因；普通划分加入最多十轮确定性组件局部移动优化。自动化验证已实测 81 个 wasm-gc 测试和 81 个 JS 测试通过，PowerShell 与 Bash 验收入口均已生成证据包并复核包内 SHA-256 清单；固定优化例从目标值 76 降至 52，独立穷举最优值为 52。正式发布时将以同一 SHA 的 tag、CI、Mooncakes manifest、干净目录安装与最终验收包形成公开证据链；官方验收结论仍由主办方作出。
+本期实现引入 schema v2 和三类泄漏模型：`exact_key`、Unicode 字符 q-gram Jaccard 文本近重复、以及同来源半开区间重叠；新增显式时间窗口的前向验证，逐折输出 `train`、`validation` 和具名 `excluded` 原因；普通划分加入最多十轮确定性组件局部移动优化。自动化验证已实测 81 个 wasm-gc 测试和 81 个 JS 测试通过，PowerShell 与 Bash 验收入口均已生成证据包并复核包内 SHA-256 清单；固定优化例从目标值 76 降至 52，独立穷举最优值为 52。该版本已以同一 SHA 完成 [v0.3.0 tag](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0)、[CI](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863265525)、[Mooncakes manifest](https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit)、干净目录安装和公开验收摘要；官方验收结论仍由主办方作出。
 
 ## 技术路线
 

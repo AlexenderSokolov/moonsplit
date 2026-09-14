@@ -69,7 +69,7 @@ MoonSplit 处理机器学习实验中的数据泄漏风险：说话人、来源�
 - `seed`、`k` 和 `ratio_tolerance_bp` 必须是非负整数；分区权重必须是正整数且保持兼容的 `Int` 单项范围。权重总和、评分、比例和摘要从累加起使用 `BigInt`，避免总和先在 `Int` 溢出；关联桶使用 `(key_name, key_value)` 元组，避免字符串分隔符歧义。
 - CLI 提供 `--version` / `version`、`normalize-spec`、`validate`、`audit --report json` 与 `bench --mode exact|interval|text`；版本号与 `moon.mod` 保持一致。
 - 检查、构建和测试（含 JS 目标）统一使用 `--deny-warn`，任何新增警告都会导致检查失败；`*_test.mbt` 是黑盒测试，`moonbitlang/core/test` 需通过 `import { ... } for "test"` 导入。
-- v0.3.0 的 tag、远端 CI、Mooncakes manifest、干净目录安装与最终验收包必须形成同一条可追踪发布证据链；当前证据状态以 `docs/acceptance.md` 为准。官方验收结论只能由赛事方作出。
+- v0.3.0 已以 `33e2e5d` 完成 annotated tag、main/tag CI、Mooncakes `build_status=success`、干净目录库/API 与 CLI wrapper 验证；公开链接和本地哈希见 `docs/acceptance.md`。官方验收结论只能由赛事方作出。
 
 ## 验收标准
 

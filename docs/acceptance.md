@@ -1,12 +1,13 @@
 # 验收记录
 
-## 0.3.0 候选验收记录 - 2026-09-14
+## 0.3.0 发布与验收记录 - 2026-09-14
 
 ### 状态与证据边界
 
-- 状态：本地实现已完成自动化复现；正式发布须以同一 SHA 的提交、tag、CI、Mooncakes manifest、干净目录安装和最终验收包共同证明。官方验收结论仍由主办方作出。
-- 版本：工作树中的 `moon.mod` 与 CLI 均为 `0.3.0`。`run_acceptance` 会记录执行时的 HEAD、工作树状态、输入哈希与环境；正式 tag 后应在干净工作树重新运行，并将该包作为发布证据。
-- 工具链：本机候选运行使用 `moon 0.1.20260904 (94521db 2026-09-04)`、`moonc v0.10.12+1634b282e (2026-09-07)`；每次完整版本/环境输出写入新建的 `artifacts/acceptance_*`。
+- 状态：已发布 `v0.3.0`。发布 tag、`main` 和本地验收包均对应 `33e2e5de201d882f955df89de0e642a106aa8116`；官方黑客松验收结论仍由主办方作出。
+- 公开记录：[PR #1](https://github.com/AlexenderSokolov/moonsplit/pull/1)、[GitHub Release](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0)、[main CI 34863052441](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863052441) 和 [tag CI 34863265525](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863265525) 均已成功；tag CI 复跑 Bash 端到端验收并上传证据。
+- Mooncakes：[manifest](https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit) 显示 `version = latest_version = 0.3.0`、`has_package = true`、`build_status = success`，包 checksum 为 `536347ca22d2748c17d6c307154b0661c7d9466bd4116f425f3958ce9bbecec2`。
+- 工具链：本机完整运行使用 `moon 0.1.20260904 (94521db 2026-09-04)`、`moonc v0.10.12+1634b282e (2026-09-07)`；每次完整版本/环境输出写入新的 `artifacts/acceptance_*`。
 
 ### 实测命令与结果
 
@@ -15,7 +16,7 @@
 - `moon test --deny-warn`：81/81 通过。
 - `moon test --target js --deny-warn`：81/81 通过。
 - `run_check.ps1` 与 `run_check.sh`：均通过。覆盖 v1 5/6 文件回归、v2 grouped 7/8 文件、time-forward 8 文件、v2/time `validate` 预检、规则/时间负例 audit 的退出码、多窗口与零 gap 边界，以及重复运行、记录逆序、规则换序与 wasm-gc/JS 产品字节一致性。
-- `run_acceptance.ps1`：通过，生成 `artifacts/acceptance_20260914_222659_042_48672`；其 37 项包内文件哈希均复核一致。`run_acceptance.sh`：通过，生成最新完整包 `artifacts/acceptance_20260914_223021_452003200_558`；其 44 项包内文件哈希均复核一致。二者均包含命令清单、输入哈希、工具链/机器元数据、产品与独立 audit 重检、优化穷举和全包 SHA-256 清单。固定四组件优化从 `76` 到 `52`，独立穷举最优为 `52`、差距 `0`；exact 与 interval 分别运行 100000 条，text 分别运行 1000、5000、10000 条，并记录候选数、实际比较数和耗时。
+- `run_acceptance.ps1`：通过，生成 `artifacts/acceptance_20260914_232204_043_61144`；其 37 项包内文件哈希复核为零差异。Git Bash `run_acceptance.sh`：通过，生成 `artifacts/acceptance_20260914_232452_980571500_1808`；其 44 项包内文件哈希复核为零差异。二者均记录空工作树、命令清单、输入哈希、工具链/机器元数据、产品与独立 audit 重检、优化穷举和全包 SHA-256 清单。固定四组件优化从 `76` 到 `52`，独立穷举最优为 `52`、差距 `0`；exact 与 interval 分别运行 100000 条，text 分别运行 1000、5000、10000 条，并记录候选数、实际比较数和耗时。可公开下载的摘要见 [release asset](https://github.com/AlexenderSokolov/moonsplit/releases/download/v0.3.0/v0.3.0-acceptance.md)。
 
 ### 本期验收覆盖
 
@@ -24,13 +25,16 @@
 - 时间：验证窗口、组件冲突排除、历史/gap/future/boundary 角色、空训练/验证失败及角色清单独立审计。
 - 数值与确定性：v1/v2 目标与比例的 `BigInt` 计算、文本证据计数的显式 `text_count_overflow` 保护、按大小并查集、逆序/换序一致性、100000 条规模与双后端产品字节比较。
 
-### 预计提交清单与待完成外部步骤
+### 发布闭环与官方提交状态
 
-最终候选提交应包含源码、README、测试、示例、验收脚本、项目/输出/API 文档、申报说明和由最终提交 SHA 重新生成的验收证据。提交前仍需核对干净工作树、最终 SHA、CI、版本、tag、包版本及真实安装调用；这些步骤目前均未执行。
+- 本期公开提交范围为 `df2ca5e..33e2e5d`，包含规则模型、时间验证、优化/审计、验收脚本和文档的语义提交；`main` 已快进到发布 SHA，`v0.3.0` 为 annotated tag。
+- 发布前已核对 registry 中没有 `0.3.0`；`moon publish` 对打包、解压和独立 `moon check` 都通过后返回 `200 OK`。随后 manifest 变为 `latest_version = 0.3.0` 和 `build_status = success`。
+- 干净目录使用 `moon add AlexenderSokolov/moonsplit@0.3.0` 解析到该精确版本与 `moonbitlang/x@0.4.46`，导入 `AlexenderSokolov/moonsplit/src/record` 的公开 API 后，`moon tree`、`moon check --deny-warn`、`moon build --deny-warn` 和 `moon run cmd/main` 均成功。另以 `moon add --bin` 和 `moon install` 验证 wrapper 输出 `MoonSplit 0.3.0`；MoonBit 将 binary dependency 标记为 deprecated，故它只是 CLI 发布验收，不作为新的推荐安装方式。
+- 已公开提交的材料包括源码、README、示例、测试、CI、发布说明、Mooncakes manifest 和验收摘要。官方入口/回执尚未在本记录中出现，因此当前官方状态是“发布材料已准备，待主办方确认”，而不是“已通过”。
 
 ## 历史记录（仅供追溯，不适用于 v0.3.0 当前能力或验收范围）
 
-以下内容保留旧版本的已发生提交、发布和当时的验证上下文。它们不覆盖本节开头的 v0.3.0 候选结论，尤其不能被解读为 v0.3.0 不支持时间前向验证。
+以下内容保留旧版本的已发生提交、发布和当时的验证上下文。它们不覆盖本节开头的 v0.3.0 发布结论，尤其不能被解读为 v0.3.0 不支持时间前向验证。
 
 ## 0.2.0 实现与验收证据 - 2026-09-12
 
