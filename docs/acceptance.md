@@ -5,7 +5,7 @@
 ### 状态与证据边界
 
 - 状态：已发布 `v0.3.0`。发布 tag 与本地验收包对应 `33e2e5de201d882f955df89de0e642a106aa8116`；`main` 另外保留发布后的证据文档提交。官方黑客松验收结论仍由主办方作出。
-- 公开记录：[PR #1](https://github.com/AlexenderSokolov/moonsplit/pull/1)、[GitHub Release](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0)、[main CI 34863052441](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863052441) 和 [tag CI 34863265525](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863265525) 均已成功；tag CI 复跑 Bash 端到端验收并上传证据。
+- 公开记录：[Issue #2](https://github.com/AlexenderSokolov/moonsplit/issues/2)、[PR #1](https://github.com/AlexenderSokolov/moonsplit/pull/1)、[GitHub Release](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0)、[main CI 34863052441](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863052441) 和 [tag CI 34863265525](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863265525) 均已成功；tag CI 复跑 Bash 端到端验收并上传证据。
 - Mooncakes：[manifest](https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit) 显示 `version = latest_version = 0.3.0`、`has_package = true`、`build_status = success`，包 checksum 为 `536347ca22d2748c17d6c307154b0661c7d9466bd4116f425f3958ce9bbecec2`。
 - 工具链：本机完整运行使用 `moon 0.1.20260904 (94521db 2026-09-04)`、`moonc v0.10.12+1634b282e (2026-09-07)`；每次完整版本/环境输出写入新的 `artifacts/acceptance_*`。
 
