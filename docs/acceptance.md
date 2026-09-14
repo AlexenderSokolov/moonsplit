@@ -4,7 +4,7 @@
 
 ### 状态与证据边界
 
-- 状态：已发布 `v0.3.0`。发布 tag、`main` 和本地验收包均对应 `33e2e5de201d882f955df89de0e642a106aa8116`；官方黑客松验收结论仍由主办方作出。
+- 状态：已发布 `v0.3.0`。发布 tag 与本地验收包对应 `33e2e5de201d882f955df89de0e642a106aa8116`；`main` 另外保留发布后的证据文档提交。官方黑客松验收结论仍由主办方作出。
 - 公开记录：[PR #1](https://github.com/AlexenderSokolov/moonsplit/pull/1)、[GitHub Release](https://github.com/AlexenderSokolov/moonsplit/releases/tag/v0.3.0)、[main CI 34863052441](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863052441) 和 [tag CI 34863265525](https://github.com/AlexenderSokolov/moonsplit/actions/runs/34863265525) 均已成功；tag CI 复跑 Bash 端到端验收并上传证据。
 - Mooncakes：[manifest](https://mooncakes.io/api-new/v0/manifest/AlexenderSokolov/moonsplit) 显示 `version = latest_version = 0.3.0`、`has_package = true`、`build_status = success`，包 checksum 为 `536347ca22d2748c17d6c307154b0661c7d9466bd4116f425f3958ce9bbecec2`。
 - 工具链：本机完整运行使用 `moon 0.1.20260904 (94521db 2026-09-04)`、`moonc v0.10.12+1634b282e (2026-09-07)`；每次完整版本/环境输出写入新的 `artifacts/acceptance_*`。
@@ -27,7 +27,7 @@
 
 ### 发布闭环与官方提交状态
 
-- 本期公开提交范围为 `df2ca5e..33e2e5d`，包含规则模型、时间验证、优化/审计、验收脚本和文档的语义提交；`main` 已快进到发布 SHA，`v0.3.0` 为 annotated tag。
+- 本期功能提交范围为 `df2ca5e..33e2e5d`，包含规则模型、时间验证、优化/审计、验收脚本和文档的语义提交；`v0.3.0` 为固定在该 SHA 的 annotated tag，`main` 保留其后的发布证据文档提交。
 - 发布前已核对 registry 中没有 `0.3.0`；`moon publish` 对打包、解压和独立 `moon check` 都通过后返回 `200 OK`。随后 manifest 变为 `latest_version = 0.3.0` 和 `build_status = success`。
 - 干净目录使用 `moon add AlexenderSokolov/moonsplit@0.3.0` 解析到该精确版本与 `moonbitlang/x@0.4.46`，导入 `AlexenderSokolov/moonsplit/src/record` 的公开 API 后，`moon tree`、`moon check --deny-warn`、`moon build --deny-warn` 和 `moon run cmd/main` 均成功。另以 `moon add --bin` 和 `moon install` 验证 wrapper 输出 `MoonSplit 0.3.0`；MoonBit 将 binary dependency 标记为 deprecated，故它只是 CLI 发布验收，不作为新的推荐安装方式。
 - 已公开提交的材料包括源码、README、示例、测试、CI、发布说明、Mooncakes manifest 和验收摘要。官方入口/回执尚未在本记录中出现，因此当前官方状态是“发布材料已准备，待主办方确认”，而不是“已通过”。
