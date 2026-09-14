@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.3.0 - 2026-09-14
+
+### Added
+
+- Schema v2 records, specifications, and rule-aware components with `exact_key`, Unicode q-gram `text_jaccard`, and same-source half-open `interval_overlap`.
+- Independent v2 grouped audit, rule witness forests, text candidate/comparison evidence, and 7/8-file grouped output contracts.
+- `time_forward` planning and audit with explicit coordinate metadata, validation windows, role manifests, component-conflict exclusions, and 8-file temporal output.
+- Deterministic local component-move optimization after greedy grouping, fixed-case exhaustive evidence, expanded bench modes, and `run_acceptance` entries.
+
+### Changed
+
+- v1 union-find now uses iterative path compression and union by size; v1 scoring, ratio checks, and summaries avoid intermediate `Int` overflow through `BigInt` arithmetic.
+- Rule/record/component ordering is explicit and stable across record reversal and rule declaration order.
+- CLI, README, API/output documentation, proposal material, project memory, CI, and acceptance records now describe v0.3 contracts.
+
+### Compatibility and release status
+
+- V1 JSON, library APIs, holdout/K-fold semantics, and 5/6-file output contracts remain supported.
+- V2 output contracts are selected by `schema_version` and must not be compared byte-for-byte with v1 layouts.
+- Release verification records the tag, CI run, Mooncakes manifest, clean-install command, and final acceptance package in `docs/acceptance.md`. Official hackathon acceptance remains the organizers' decision.
+
 ## 0.2.0 - 2026-09-11
 
 ### Added

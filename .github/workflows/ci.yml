@@ -11,8 +11,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install MoonBit
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          # This is the compiler version used by the v0.3.0 local acceptance run.
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s 0.10.12+1634b282e
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Verify pinned MoonBit compiler
+        run: |
+          moon version --all
+          moon version --all | grep -F "moonc v0.10.12+1634b282e"
       - name: Sync registry
         run: moon update
       - name: Format
@@ -29,5 +34,14 @@ jobs:
         run: moon test --deny-warn
       - name: Test JS target
         run: moon test --target js --deny-warn
-      - name: End-to-end checks
-        run: bash ./run_check.sh
+      - name: End-to-end acceptance
+        run: bash ./run_acceptance.sh
+      - name: Upload acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moonsplit-acceptance-evidence
+          path: |
+            artifacts/acceptance_*
+            artifacts/check_*
+          if-no-files-found: warn
